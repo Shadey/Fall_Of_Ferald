@@ -1,0 +1,3 @@
+Character._|testText1
+scase|testText2
+.|testText3

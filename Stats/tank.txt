@@ -1,0 +1,5 @@
+# HP Str Mag Skl Spd Def Res Lck Mov
+# Base Stats
+18,8,0,4,2,11,0,9,4
+# Growth
+50,25,0,15,10,15,5,0,0

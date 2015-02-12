@@ -1,0 +1,6 @@
+# This file contains the growth chances of each unit type in the game,
+# formatted as follows:
+# Class,HP,Str,Mag,Skl,Spd,Def,Res,Lck,Mov
+mage,35,0,20,20,20,5,10,0,0
+tank,50,25,0,15,10,15,5,0,0
+warrior,45,20,0,25,20,10,5,0,0

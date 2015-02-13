@@ -18,6 +18,9 @@ void UserInterface::update(sf::Event::MouseMoveEvent moveEvent, sf::Event::Mouse
     std::list<Tooltip>::iterator itr;
     int offsetX, offsetY;       // The x and y offset to move the tooltip by
 
+	if(buttonEvent.button == sf::Mouse::Button::Left)
+		std::cout << "LMB Pressed!" << std::endl;
+
     for (itr = tooltips.begin(); itr != tooltips.end(); itr++)
     {
         // Checking if the cursor's location is within the tooltip

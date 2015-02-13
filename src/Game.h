@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 #include <SFML/Graphics.hpp>
+#include <SFML/Window/Event.hpp>
 #include "ImageManager.h"
 #include "Level.h"
 #include "Pathfinder.h"
@@ -21,6 +22,7 @@ class Game
         ImageManager imageManager;
 		InputManager inputManager;
         sf::RenderWindow window;
+		sf::Event event;
 		UserInterface ui;
         Level* testLevel;
 

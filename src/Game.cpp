@@ -17,6 +17,9 @@ void Game::run()
     testLevel = new Level("levels/example/map.txt", "assets/images/tileSheets/spriteSheet.png", &imageManager);
     testLevel->initilizeAI("levels/example/units.txt", "assets/images/unitSprites", imageManager);
 
+	// Loading the interface data
+	imageManager.loadImage("assets/images/interface/tooltip.png", "tooltip");
+
     //float lastTime = 0;
     //sf::Clock clock;
     window.setFramerateLimit(60);
@@ -34,9 +37,24 @@ void Game::update()
     //float fps = 1.f / currentTime;//(currentTime - lastTime);
     //lastTime = currentTime;
 
-	inputManager.update();
     std::vector<sf::Vector3i> locations;
 	std::stack<sf::Vector2i> path;
+
+	while(window.pollEvent(event))
+	{
+		switch(event.type)
+		{
+			case sf::Event::GainedFocus:
+				inputManager.setWindowFocused(true);
+				break;
+			case sf::Event::LostFocus:
+				inputManager.setWindowFocused(false);
+				break;
+		}
+	}
+
+	// Updating the input manager
+	inputManager.update();
 
     // Updating the AI
     if(!turnPassed)
@@ -65,11 +83,9 @@ void Game::update()
 	}
 	else if (inputManager.pressedOnce("confirm"))
 	{
-		std::cout << "Outputting location data" << std::endl;
-		for(auto i = locations.begin(); i != locations.end(); i++)
-			std::cout << "(" << i->x << "," << i->y << ")" << std::endl;
+		std::cout << "Creating tooltip!" << std::endl;
+		ui.addTooltip("Test Tooltip", "Sometext", imageManager.getTexture("tooltip"), 50, 50);
 	}
-		//std::cout << "Confirm key pressed!" << std::endl;
 }
 
 void Game::render()

@@ -9,6 +9,7 @@ InputManager::InputManager()
     keyBinds["right"] = sf::Keyboard::D;
     keyBinds["confirm"] = sf::Keyboard::Return;
     keyBinds["cancel"] = sf::Keyboard::BackSpace;
+	windowFocused = true;
 }
 
 InputManager::~InputManager()
@@ -18,11 +19,14 @@ InputManager::~InputManager()
 
 void InputManager::update()
 {
-    for(int i = 0; i < sf::Keyboard::KeyCount; i++)
-    {
-        previousPressedKeys[i] = pressedKeys[i];
-        pressedKeys[i] = sf::Keyboard::isKeyPressed( (sf::Keyboard::Key)i );
-    }
+	if(windowFocused)
+	{
+    	for(int i = 0; i < sf::Keyboard::KeyCount; i++)
+    	{
+        	previousPressedKeys[i] = pressedKeys[i];
+        	pressedKeys[i] = sf::Keyboard::isKeyPressed( (sf::Keyboard::Key)i );
+    	}
+	}
 }
 
 bool InputManager::pressedOnce(std::string keyName)

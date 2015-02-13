@@ -11,10 +11,12 @@ class InputManager
         void update();
         bool pressedOnce(std::string keyName);
         bool validKeyDown();
+		inline void setWindowFocused(bool focusStatus) { windowFocused = focusStatus; }
     private:
         bool pressedKeys[sf::Keyboard::KeyCount];
         bool previousPressedKeys[sf::Keyboard::KeyCount];
         std::map<std::string, sf::Keyboard::Key> keyBinds;
+		bool windowFocused;
 };
 
 #endif // INPUTMANAGER_H

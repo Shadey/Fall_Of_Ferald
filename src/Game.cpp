@@ -19,6 +19,8 @@ void Game::run()
 
 	// Loading the interface data
 	imageManager.loadImage("assets/images/interface/tooltip.png", "tooltip");
+	imageManager.loadImage("assets/images/interface/Dialogue.png", "dialogueBox");
+	ui.addDialogueBox("dialogue/test.txt", imageManager.getTexture("dialogueBox"), 0, 500);
 
     //float lastTime = 0;
     //sf::Clock clock;

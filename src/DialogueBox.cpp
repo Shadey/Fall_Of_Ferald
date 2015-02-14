@@ -3,6 +3,7 @@
 
 DialogueBox::DialogueBox()
 {
+	active = false;
 }
 
 DialogueBox::~DialogueBox()
@@ -17,6 +18,8 @@ bool DialogueBox::openScript(const std::string& filePath)
 
     if (!openFile) return false;
     else return true;
+
+	active = true;
 }
 
 void DialogueBox::nextLine()
@@ -34,15 +37,17 @@ void DialogueBox::nextLine()
 
     dialogue.setPosition(20, sprite.getPosition().y + 80);
 
-
-    std::cout << std::endl;
-    std::cout << "Top: " << name.getGlobalBounds().top << std::endl;
-    std::cout << "Height: " << name.getGlobalBounds().height << std::endl;
+	// Checking if we've reached the end of the dialogue file
+	if(openFile.eof())
+		active = false;
 }
 
 void DialogueBox::draw(sf::RenderWindow *window)
 {
-    window->draw(sprite);
-    window->draw(name);
-    window->draw(dialogue);
+	if(active)
+	{
+    	window->draw(sprite);
+    	window->draw(name);
+    	window->draw(dialogue);
+	}
 }

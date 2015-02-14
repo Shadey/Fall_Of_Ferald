@@ -32,6 +32,9 @@ void UserInterface::update(sf::Vector2i pointerPosition, sf::Vector2i prevPointe
 				break;
 			}
 		}
+
+		if(lmbPressed)
+			dialogueBox.nextLine();
 	}
 	else if (rmbPressed)
 	{
@@ -45,27 +48,6 @@ void UserInterface::update(sf::Vector2i pointerPosition, sf::Vector2i prevPointe
 			else ++itr;
 		}
 	}
-
-    /*for (itr = tooltips.begin(); itr != tooltips.end(); itr++)
-    {
-        // Checking if the cursor's location is within the tooltip
-        if ( ( pointerPosition.x > itr->sprite.getPosition().x &&
-			   pointerPosition.x < itr->sprite.getPosition().x + itr->sprite.getGlobalBounds().width)
-          && ( pointerPosition.y > itr->sprite.getPosition().y &&
-               pointerPosition.y < itr->sprite.getPosition().y + itr-> sprite.getGlobalBounds().height) )
-        {
-            offsetX = pointerPosition.x - itr->sprite.getPosition().x;
-            offsetY = pointerPosition.y - itr->sprite.getPosition().y;
-
-			std::cout << "Tooltip clicked!" << std::endl;
-
-            // Moving the cursor if the mouse button is held down
-            if (lmbPressed)
-                itr->sprite.setPosition(pointerPosition.x + offsetX, pointerPosition.y + offsetY);
-            else if (rmbPressed)
-                tooltips.erase(itr);
-        }
-    }*/
 }
 
 // Method to add a new tooltip to the tooltip list
@@ -111,6 +93,7 @@ void UserInterface::addDialogueBox(std::string scriptPath, sf::Texture& image, i
         dialogueBox.dialogue.setFont(regularFont);
         dialogueBox.dialogue.setCharacterSize(48);
         dialogueBox.nextLine();
+		dialogueBox.active = true;
     }
 }
 
@@ -123,7 +106,7 @@ void UserInterface::draw(sf::RenderWindow *window)
     for (auto i = tooltips.begin(); i != tooltips.end(); i++)
         i->draw(window);
 
-    //dialogueBox.draw(window);
+    dialogueBox.draw(window);
 }
 
 // Method to get the tooltip list

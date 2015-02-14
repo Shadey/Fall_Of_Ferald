@@ -22,6 +22,7 @@ class DialogueBox
         sf::Text name;          // The name of the character that is currently talking
         sf::Text dialogue;      // The dialogue being displayed
         sf::Sprite sprite;
+		bool active;			// Wether or not the dialogue box should be drawn
 };
 
 #endif // DIALOGUEBOX_H

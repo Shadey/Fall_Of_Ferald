@@ -13,27 +13,29 @@ UserInterface::~UserInterface()
     //dtor
 }
 
-void UserInterface::update(sf::Event::MouseMoveEvent moveEvent, sf::Event::MouseButtonEvent buttonEvent)
+void UserInterface::update(sf::Vector2i pointerPosition, bool lmbPressed, bool rmbPressed)
 {
     std::list<Tooltip>::iterator itr;
     int offsetX, offsetY;       // The x and y offset to move the tooltip by
 
-	if(buttonEvent.button == sf::Mouse::Button::Left)
-		std::cout << "LMB Pressed!" << std::endl;
+	if(lmbPressed)
+		std::cout << "Mouse position: (" << pointerPosition.x << "," << pointerPosition.y << ")" << std::endl;
 
     for (itr = tooltips.begin(); itr != tooltips.end(); itr++)
     {
         // Checking if the cursor's location is within the tooltip
-        if ( ( moveEvent.x > itr->sprite.getPosition().x && moveEvent.x < itr->sprite.getPosition().x + itr->sprite.getGlobalBounds().width)
-            && ( moveEvent.y > itr->sprite.getPosition().y && moveEvent.y < itr->sprite.getPosition().y + itr-> sprite.getGlobalBounds().height) )
+        if ( ( pointerPosition.x > itr->sprite.getPosition().x && pointerPosition.x < itr->sprite.getPosition().x + itr->sprite.getGlobalBounds().width)
+            && ( pointerPosition.y > itr->sprite.getPosition().y && pointerPosition.y < itr->sprite.getPosition().y + itr-> sprite.getGlobalBounds().height) )
         {
-            offsetX = moveEvent.x - itr->sprite.getPosition().x;
-            offsetY = moveEvent.y - itr->sprite.getPosition().y;
+            offsetX = pointerPosition.x - itr->sprite.getPosition().x;
+            offsetY = pointerPosition.y - itr->sprite.getPosition().y;
+
+			std::cout << "Tooltip clicked!" << std::endl;
 
             // Moving the cursor if the mouse button is held down
-            if (buttonEvent.button == sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-                itr->sprite.setPosition(moveEvent.x + offsetX, moveEvent.y + offsetY);
-            else if (buttonEvent.button == sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
+            if (lmbPressed)
+                itr->sprite.setPosition(pointerPosition.x + offsetX, pointerPosition.y + offsetY);
+            else if (rmbPressed)
                 tooltips.erase(itr);
         }
     }

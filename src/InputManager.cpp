@@ -9,7 +9,6 @@ InputManager::InputManager()
     keyBinds["right"] = sf::Keyboard::D;
     keyBinds["confirm"] = sf::Keyboard::Return;
     keyBinds["cancel"] = sf::Keyboard::BackSpace;
-	windowFocused = true;
 }
 
 InputManager::~InputManager()
@@ -17,16 +16,24 @@ InputManager::~InputManager()
     //dtor
 }
 
-void InputManager::update()
+void InputManager::update(sf::RenderWindow& window)
 {
-	if(windowFocused)
+	// Updating the keyboard state
+   	for(int i = 0; i < sf::Keyboard::KeyCount; i++)
+   	{
+       	previousPressedKeys[i] = pressedKeys[i];
+       	pressedKeys[i] = sf::Keyboard::isKeyPressed( (sf::Keyboard::Key)i );
+   	}
+
+	// Updating the state of the mouse buttons
+	for(int i = 0; i < sf::Mouse::ButtonCount; i++)
 	{
-    	for(int i = 0; i < sf::Keyboard::KeyCount; i++)
-    	{
-        	previousPressedKeys[i] = pressedKeys[i];
-        	pressedKeys[i] = sf::Keyboard::isKeyPressed( (sf::Keyboard::Key)i );
-    	}
+		previousPressedMouseButtons[i] = pressedMouseButtons[i];
+		pressedMouseButtons[i] = sf::Mouse::isButtonPressed( (sf::Mouse::Button)i );
 	}
+
+	// Updating the state of the mouse position
+	mousePosition = sf::Mouse::getPosition(window);
 }
 
 bool InputManager::pressedOnce(std::string keyName)
@@ -34,6 +41,13 @@ bool InputManager::pressedOnce(std::string keyName)
     if(pressedKeys[keyBinds[keyName]] && !previousPressedKeys[keyBinds[keyName]])
         return true;
     else return false;
+}
+
+bool InputManager::pressedOnce(sf::Mouse::Button button)
+{
+	if(pressedMouseButtons[button] && !previousPressedMouseButtons[button])
+		return true;
+	else return false;
 }
 
 bool InputManager::validKeyDown()

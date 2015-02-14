@@ -1,5 +1,6 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window.hpp>
 #include <map>
 
@@ -8,15 +9,18 @@ class InputManager
     public:
         InputManager();
         virtual ~InputManager();
-        void update();
+        void update(sf::RenderWindow& window);
         bool pressedOnce(std::string keyName);
+		bool pressedOnce(sf::Mouse::Button button);
         bool validKeyDown();
-		inline void setWindowFocused(bool focusStatus) { windowFocused = focusStatus; }
+		inline sf::Vector2i getMousePosition() { return mousePosition; }
     private:
         bool pressedKeys[sf::Keyboard::KeyCount];
+		bool pressedMouseButtons[sf::Mouse::ButtonCount];
+		bool previousPressedMouseButtons[sf::Mouse::ButtonCount];
         bool previousPressedKeys[sf::Keyboard::KeyCount];
         std::map<std::string, sf::Keyboard::Key> keyBinds;
-		bool windowFocused;
+		sf::Vector2i mousePosition;
 };
 
 #endif // INPUTMANAGER_H

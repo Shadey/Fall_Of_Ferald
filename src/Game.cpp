@@ -44,17 +44,15 @@ void Game::update()
 	{
 		switch(event.type)
 		{
-			case sf::Event::GainedFocus:
-				inputManager.setWindowFocused(true);
-				break;
-			case sf::Event::LostFocus:
-				inputManager.setWindowFocused(false);
-				break;
 		}
 	}
 
 	// Updating the input manager
-	inputManager.update();
+	inputManager.update(window);
+
+	// Updating the UI
+	ui.update(inputManager.getMousePosition(), inputManager.pressedOnce(sf::Mouse::Left),
+			  inputManager.pressedOnce(sf::Mouse::Right));
 
     // Updating the AI
     if(!turnPassed)

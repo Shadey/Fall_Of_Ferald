@@ -22,7 +22,7 @@ class UserInterface
         virtual ~UserInterface();
         void addTooltip(std::string header, std::string body, sf::Texture& image, int x, int y);
         void addDialogueBox(std::string scriptPath, sf::Texture& image, int x, int y);
-        void update(sf::Event::MouseMoveEvent moveEvent, sf::Event::MouseButtonEvent buttonEvent);
+        void update(sf::Vector2i pointerPosition, bool lmbPressed, bool rmbPressed);
         void draw(sf::RenderWindow *window);
         void nextDialogueLine();
         std::list<Tooltip> getTooltips();

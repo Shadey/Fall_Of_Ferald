@@ -13,19 +13,46 @@ UserInterface::~UserInterface()
     //dtor
 }
 
-void UserInterface::update(sf::Vector2i pointerPosition, bool lmbPressed, bool rmbPressed)
+void UserInterface::update(sf::Vector2i pointerPosition, sf::Vector2i prevPointerPos, bool lmbPressed, bool rmbPressed)
 {
-    std::list<Tooltip>::iterator itr;
     int offsetX, offsetY;       // The x and y offset to move the tooltip by
 
-	if(lmbPressed)
-		std::cout << "Mouse position: (" << pointerPosition.x << "," << pointerPosition.y << ")" << std::endl;
+	// If the LMB is _held_ not pressed
+	if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		for(auto itr = tooltips.begin(); itr != tooltips.end(); ++itr)
+		{
+			if(itr->containsPoint(pointerPosition))
+			{
+				offsetX = pointerPosition.x - prevPointerPos.x;
+				offsetY = pointerPosition.y - prevPointerPos.y;
+				itr->sprite.move(offsetX, offsetY);
+				itr->headerText.move(offsetX, offsetY);
+				itr->bodyText.move(offsetX, offsetY);
+				break;
+			}
+		}
+	}
+	else if (rmbPressed)
+	{
+		for(auto itr = tooltips.begin(); itr != tooltips.end(); )
+		{
+			if(itr->containsPoint(pointerPosition))
+			{
+				itr = tooltips.erase(itr);
+				break;
+			}
+			else ++itr;
+		}
+	}
 
-    for (itr = tooltips.begin(); itr != tooltips.end(); itr++)
+    /*for (itr = tooltips.begin(); itr != tooltips.end(); itr++)
     {
         // Checking if the cursor's location is within the tooltip
-        if ( ( pointerPosition.x > itr->sprite.getPosition().x && pointerPosition.x < itr->sprite.getPosition().x + itr->sprite.getGlobalBounds().width)
-            && ( pointerPosition.y > itr->sprite.getPosition().y && pointerPosition.y < itr->sprite.getPosition().y + itr-> sprite.getGlobalBounds().height) )
+        if ( ( pointerPosition.x > itr->sprite.getPosition().x &&
+			   pointerPosition.x < itr->sprite.getPosition().x + itr->sprite.getGlobalBounds().width)
+          && ( pointerPosition.y > itr->sprite.getPosition().y &&
+               pointerPosition.y < itr->sprite.getPosition().y + itr-> sprite.getGlobalBounds().height) )
         {
             offsetX = pointerPosition.x - itr->sprite.getPosition().x;
             offsetY = pointerPosition.y - itr->sprite.getPosition().y;
@@ -38,7 +65,7 @@ void UserInterface::update(sf::Vector2i pointerPosition, bool lmbPressed, bool r
             else if (rmbPressed)
                 tooltips.erase(itr);
         }
-    }
+    }*/
 }
 
 // Method to add a new tooltip to the tooltip list

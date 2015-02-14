@@ -33,6 +33,7 @@ void InputManager::update(sf::RenderWindow& window)
 	}
 
 	// Updating the state of the mouse position
+	previousMousePosition = mousePosition;
 	mousePosition = sf::Mouse::getPosition(window);
 }
 

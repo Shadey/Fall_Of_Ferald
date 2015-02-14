@@ -13,6 +13,7 @@ class Tooltip
         virtual ~Tooltip();
         sf::Sprite getSprite() {return sprite;}
         void draw(sf::RenderWindow *window);
+		bool containsPoint(sf::Vector2i& point);
     private:
         sf::Sprite sprite;
         sf::Text headerText;

@@ -51,8 +51,8 @@ void Game::update()
 	inputManager.update(window);
 
 	// Updating the UI
-	ui.update(inputManager.getMousePosition(), inputManager.pressedOnce(sf::Mouse::Left),
-			  inputManager.pressedOnce(sf::Mouse::Right));
+	ui.update(inputManager.getMousePosition(), inputManager.getPrevMousePosition(),
+			  inputManager.pressedOnce(sf::Mouse::Left), inputManager.pressedOnce(sf::Mouse::Right));
 
     // Updating the AI
     if(!turnPassed)

@@ -251,6 +251,15 @@ void AI::calculateCosts(Unit& currentUnit, int** costs, Tile** const levelMap)
     }
 }
 
+void AI::updateSprites(const int& tileSize)
+{
+	for(auto &unit : enemyUnits)
+		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
+
+	for(auto &unit : availableUnits)
+		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
+}
+
 void AI::setMapDimensions(int width, int height)
 {
     mapWidth = width;
@@ -263,5 +272,4 @@ AI::~AI()
 
 AI::AI()
 {
-
 }

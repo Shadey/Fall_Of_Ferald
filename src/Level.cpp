@@ -107,11 +107,14 @@ void Level::initilizeAI(const std::string& unitPath, const std::string& spritesh
 	combatController.getEnemyUnits().back().setSprite(imageManager.getTexture("player"));
 
 	// Initilising the pathfinder
-	//pathfinder = Pathfinder(this);
+	pathfinder = Pathfinder(this);
 }
 
 void Level::update(InputManager& inputManager, UserInterface& ui)
 {
+	// Updating the sprites
+	combatController.updateSprites(tileSize);
+
 	if(!playerTurn)
 	{
 		updateAI();
@@ -153,12 +156,13 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 // Method to call the AI's update methods.
 void Level::updateAI()
 {
-	// Updating the AI's sprite positions
+	/* Updating the AI's sprite positions
 	for(auto &unit : combatController.getAvailableUnits())
 		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
 
 	for(auto &unit: combatController.getEnemyUnits())
 		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
+	*/
 }
 
 // Draw method, draws the tiles and the AI-controlled units

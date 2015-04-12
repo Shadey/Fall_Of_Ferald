@@ -23,6 +23,7 @@ class AI
 		bool parseFile(const std::string fileLocation, bool gettingGrowthRates);
         std::list<Unit> getPossibleTargets(Unit& currentUnit, Tile** const levelMap);
         void setMapDimensions(int width, int height);
+		void updateSprites(const int& tileSize);
 		inline void addEnemyUnit(Unit unit) { enemyUnits.push_back(unit); }
         virtual ~AI();
 

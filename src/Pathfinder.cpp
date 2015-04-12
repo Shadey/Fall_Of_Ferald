@@ -1,7 +1,8 @@
 #include "Pathfinder.h"
+#include "Level.h"
 
-//Pathfinder::Pathfinder(Level* currentLevel)
-Pathfinder::Pathfinder()
+Pathfinder::Pathfinder(Level* currentLevel)
+//Pathfinder::Pathfinder()
 {
     // Initilising movement costs
     moveCosts["foot"]["plain"] = 1;
@@ -28,12 +29,12 @@ Pathfinder::Pathfinder()
     moveCosts["mech"]["water"] = 999;
     moveCosts["mech"]["wall"] = 999;
 
-    //levelPtr = currentLevel;
+    levelPtr = currentLevel;
 }
 
 Pathfinder::~Pathfinder()
 {
-    //levelPtr = NULL;
+    levelPtr = NULL;
 }
 
 // Calculates the area on the map that a unit can move to, based on it's movement
@@ -104,8 +105,8 @@ std::vector<sf::Vector3i> Pathfinder::calculateArea(sf::Vector2i start, int rang
 	for(auto i = expansion.begin() + 1; i != expansion.end(); )
 	{
 		// TODO: Proper move cost evaluation
-		//i->z = moveCosts["naval"][levelPtr->getTileType(i->x, i->y)];
-		i->z = moveCosts["foot"]["plain"];
+		i->z = moveCosts["foot"][levelPtr->getTileType(i->x, i->y)];
+		//i->z = moveCosts["foot"]["plain"];
 		i->z += std::abs(start.x - i->x);
 		i->z += std::abs(start.y - i->y);
 

@@ -88,7 +88,6 @@ std::vector<sf::Vector3i> Pathfinder::calculateArea(sf::Vector2i start, int rang
 
     // Trimming the excess
     expansion.erase(expansion.begin() + maxSize, expansion.end());
-	expansion.erase(expansion.begin());
 
     // Removing non-existant nodes
     for(auto itr = expansion.begin(); itr != expansion.end(); )

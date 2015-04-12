@@ -7,6 +7,7 @@
 #include "Pathfinder.h"
 #include "InputManager.h"
 #include "UserInterface.h"
+#include "AI.h"
 #include <iostream>
 #include <list>
 

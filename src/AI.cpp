@@ -1,6 +1,7 @@
 #include "AI.h"
 #include <fstream>
 #include <sstream>
+#include <iostream>
 #include <deque>
 
 AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
@@ -19,9 +20,9 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
     std::stringstream ss;
 
     // Arrays to store the stats and growths temporarily
-    int baseStats[8] = {0,0,0,0,0,0,0,0};
-    int growths[8] = {0,0,0,0,0,0,0,0};
-    int finalStats[8] = {0,0,0,0,0,0,0,0};
+    int baseStats[statCount] = {0,0,0,0,0,0,0,0,0};
+    int growths[statCount] = {0,0,0,0,0,0,0,0,0};
+    int finalStats[statCount] = {0,0,0,0,0,0,0,0,0};
     int tempX = 0;
     int tempY = 0;
     int tempLvl = 0;
@@ -134,25 +135,23 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
 
                     if (!skipLine)
                     {
-                        std::cout << "The first character in line " << i << " is " << unitLine[0] << std::endl;
                         i++;
                     }
 
                     ss.clear();
                     ss.str(std::string());
                 }
-                std::cout << "Parsed " << i << " line(s)" << std::endl;
             }
             // Resetting the counters for the next line
             i = 0;
 
             // leveling up each of the individual stats depending on the unit's level
-            for(int k = 0; k < 8; k++)
+            for(int k = 0; k < statCount; k++)
             {
                 finalStats[k] += baseStats[k];
                 std::cout << "Base Stat: " << baseStats[k];
                 int rng;
-                for(int j = 0; j < tempLvl; j++)
+                for(int j = 0; j < tempLvl - 1; j++)
                 {
                     rng = dis(gen);
                     //std::cout << "rng: " << rng << ", grw: " << growths[k] << std::endl;
@@ -167,7 +166,7 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
             std::cout << std::endl;
 
             // Adding the unit to the available units and assigning the previous unit type
-            availableUnits.push_back(Unit(unitType, tempX, tempY, 0, finalStats, tempLvl));
+            availableUnits.push_back(Unit(unitType, tempX, tempY, finalStats, tempLvl));
             previousUnitType = unitType;
         }
     }
@@ -252,11 +251,6 @@ void AI::calculateCosts(Unit& currentUnit, int** costs, Tile** const levelMap)
     }
 }
 
-void AI::loadStats(const std::string statsPath)
-{
-    /// TODO: Stat Loading
-}
-
 void AI::setMapDimensions(int width, int height)
 {
     mapWidth = width;
@@ -265,14 +259,6 @@ void AI::setMapDimensions(int width, int height)
 
 AI::~AI()
 {
-    // Clearning up the stat pointers
-    std::map<std::string, int**>::iterator itr;
-    for(itr = statInfo.begin(); itr != statInfo.end(); ++itr)
-    {
-        for(int i = 0; i < statCount; ++i)
-            delete itr->second[i];
-        delete itr->second;     // God I hope this doesn't break everthing
-    }
 }
 
 AI::AI()

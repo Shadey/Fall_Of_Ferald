@@ -1,4 +1,3 @@
-SRPG_Dev|Hey there /AGDG/!
-SRPG_Dev|I'm not a nodev anymore!
-SRPG_Dev|Basic pathfinding and searching using wave propogation is done!
-SRPG_Dev|I still need to test if the rest of my AI code is working correctly though
+Tutorial|Hey there, click to progress this dialogue!
+Tutorial|Grand, you can press 'P' to play an AI turn once this dialog is exhausted
+Tutorial|Alternatively, you can press 'S' to step through the AI's turn, 'R' to reset or Backspace to quit

@@ -1,3 +1,4 @@
-Character._|testText1
-scase|testText2
-.|testText3
+SRPG_Dev|Hey there /AGDG/!
+SRPG_Dev|I'm not a nodev anymore!
+SRPG_Dev|Basic pathfinding and searching using wave propogation is done!
+SRPG_Dev|I still need to test if the rest of my AI code is working correctly though

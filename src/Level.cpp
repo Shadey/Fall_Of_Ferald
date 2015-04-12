@@ -11,6 +11,7 @@ Level::Level(const std::string& mapPath, const std::string& tileSheetPath, Image
     imageManager->loadImage(tileSheetPath);
     levelWidth = 0;
     levelHeight = 0;
+	playerTurn = true;
 
     std::cout << "loading level" << std::endl;
 
@@ -86,25 +87,40 @@ Level::Level(const std::string& mapPath, const std::string& tileSheetPath, Image
 void Level::initilizeAI(const std::string& unitPath, const std::string& spritesheetPath, ImageManager& imageManager)
 {
     std::cout << "starting to init AI" << std::endl;
-    //combatController = AI(unitPath, "classStats/");
+    combatController = AI(unitPath, "Stats/");
     std::cout << "AI initilized" << std::endl;
 
-    imageManager.loadImage(spritesheetPath + "/mage.png", "mageSprite");
-    imageManager.loadImage(spritesheetPath + "/warrior.png", "warriorSprite");
-    imageManager.loadImage(spritesheetPath + "/tank.png", "tankSprite");
+	// Loading the images for the NPC units
+    imageManager.loadImage(spritesheetPath + "/mage.png", "mage");
+    imageManager.loadImage(spritesheetPath + "/warrior.png", "warrior");
+    imageManager.loadImage(spritesheetPath + "/tank.png", "tank");
 
-    //combatController.initSprites(imageManager);
+	// Setting the sprites for the NPC units, works as long as the generic unit
+	// names are the same as the imageManager keys
+	for(auto &unit : combatController.getAvailableUnits())
+		unit.setSprite(imageManager.getTexture(unit.getType()));
+
+	// Adding a unit for the AI to fight
+	
+}
+
+void Level::update()
+{
+	if(!playerTurn)
+	{
+		updateAI();
+	}
 }
 
 // Method to call the AI's update methods.
-void Level::updateAI(std::list<Unit> enemies)
+void Level::updateAI()
 {
-    // Iterator for iteratin'
-    std::list<Unit>::iterator unit_itr;
-
-    std::cout << "updating the AI" << std::endl;
-
-    // Updating the enemy unit list, in case any of the units died during the last turn.
+	// Updating the sprite positions
+	for(auto &unit : combatController.getAvailableUnits())
+	{
+		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
+	}
+		
     //combatController.setEnemyUnits(enemies);
 }
 
@@ -123,13 +139,9 @@ void Level::draw(sf::RenderWindow& window)
         }
     }
 
-    // Drawing the units
-/*    for(cUnitItr = combatController.getAvailableUnits().begin();
-        cUnitItr != combatController.getAvailableUnits().end();
-        ++cUnitItr)
-    {
-        window.draw(cUnitItr->getSprite());
-    }*/
+	// Drawing the units
+	for(auto &unit : combatController.getAvailableUnits())
+		window.draw(unit.getSprite());
 }
 
 std::string Level::getTileType(int x, int y)

@@ -1,6 +1,6 @@
-# This file contains the base stats of each unit type in the game,
+# This file contains the base stats of each unit type in the game, 
 # formatted as follows:
 # Class,HP,Str,Mag,Skl,Spd,Def,Res,Lck,Mov
-mage,16,04,3,4,2,3,7,5,3
+mage,16,4,3,4,2,3,7,5,3
 tank,18,8,0,4,2,11,0,9,4
 warrior,18,5,0,8,7,5,0,6,5

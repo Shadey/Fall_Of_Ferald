@@ -56,24 +56,9 @@ void Game::update()
 	ui.update(inputManager.getMousePosition(), inputManager.getPrevMousePosition(),
 			  inputManager.pressedOnce(sf::Mouse::Left), inputManager.pressedOnce(sf::Mouse::Right));
 
-    // Updating the AI
-    if(!turnPassed)
-    {
-        Pathfinder pathfinder(testLevel);
-        locations = pathfinder.calculateArea(sf::Vector2i(5,5), 3, testLevel->getMapSizeX(), testLevel->getMapSizeY());
-
-		std::cout << "Locations has a size of " << locations.size() << std::endl;
-		for(auto i = locations.begin(); i != locations.end(); i++)
-			std::cout << "(" << i->x << "," << i->y << "," << i->z << ")" << std::endl;
-		ui.highlightTiles(locations, sf::Color(112,244,235,130), testLevel->getTileSize());
-
-		/*path = pathfinder.getPath(locations, sf::Vector2i(5,5), sf::Vector2i(3,7));
-
-		ui.highlightTiles(path, sf::Color(255, 0, 0, 130), testLevel->getTileSize());*/
-
-        turnPassed = true;
-
-    }
+	// Updating the level
+	testLevel->update();
+	testLevel->nextTurn();
 
 	// Checking if the window's been closed
 	if(inputManager.pressedOnce("cancel"))

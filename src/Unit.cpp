@@ -1,39 +1,33 @@
 #include "Unit.h"
 
 // Constructor
-Unit::Unit(std::string unitName, std::string unitType, int health, int speed, int skill, int strength, int defense, int moveRange, int _x, int _y, int _layer)
-: Actor(_x, _y, _layer)
+Unit::Unit(std::string unitName, std::string unitType, int lvl, int health, int strength, int magic int skill,
+	int speed, int defense, int resistance, int luck, int moveRange, int _x, int _y)
 {
-    /*stats[0].name = "health";
-    stats[0].base = health;
-    stats[0].modifier = 0;*/
+	level = lvl;
 
     // Initilizing the unit's stats
     stats["health"] = Stat(health);
-    stats["speed"] = Stat(speed);
-    stats["skill"] = Stat(skill);
-    stats["moveRange"] = Stat(moveRange);
     stats["strength"] = Stat(strength);
+	stats["magic"] = Stat(magic);
+    stats["skill"] = Stat(skill);
+    stats["speed"] = Stat(speed);
     stats["defense"] = Stat(defense);
+	stats["resistance"] = Stat(resistance);
+	stats["luck"] = Stat(luck);
+    stats["moveRange"] = Stat(moveRange);
 
     if (unitName == "")
         name = unitType;
     else name = unitName;
+
+	x = _x;
+	y = _y;
 }
 
 // Alternative constructor for a generic unit, takes an array
-Unit::Unit(std::string unitType, int _x, int _y, int _layer, int statArray[], int lvl)
-: Actor(_x, _y, _layer)
+Unit::Unit(std::string unitType, int _x, int _y, int* statArray, int lvl)
 {
-    int arraySize = sizeof statArray/sizeof(int);
-
-    // Error checking
-    if(arraySize != 8)
-    {
-        std::cout << "OH GOD, SOMETHING HAS GONE HORRIBLY WRONG" << std::endl;
-        std::cout << "THE STAT ARRAY IS SOMEHOW " << arraySize << "!" << std::endl;
-    }
-
     // Naming the unit based on it's type.
     name = unitType;
     type = unitType;
@@ -47,10 +41,12 @@ Unit::Unit(std::string unitType, int _x, int _y, int _layer, int statArray[], in
     stats["skill"]      = Stat(statArray[3]);
     stats["speed"]      = Stat(statArray[4]);
     stats["defense"]    = Stat(statArray[5]);
-    stats["luck"]       = Stat(statArray[6]);
-    stats["moveRange"]  = Stat(statArray[7]);
+    stats["resistance"] = Stat(statArray[6]);
+    stats["luck"]       = Stat(statArray[7]);
+    stats["moveRange"]  = Stat(statArray[8]);
 
-    //std::cout << "The health of the " << unitType << " is " << statArray[0] << std::endl;
+	x = _x;
+	y = _y;
 }
 
 std::list<Item> Unit::getWeapons()
@@ -85,22 +81,6 @@ void Unit::modifyStat(std::string statName, int mod)
     {
         stats[statName].modifier += mod;
     }
-}
-
-void Unit::setSprite(ImageManager imageManager, const std::string& filename, int x, int y, int w, int h)
-{
-    sf::IntRect target(x, y, w, h);
-
-    imageManager.loadImage(filename);
-    sprite.setTextureRect(target);
-    sprite.setTexture(imageManager.getTexture(filename));
-}
-
-void Unit::setSprite(sf::Texture& texture, int sourceX, int sourceY, int sourceW, int sourceH)
-{
-    sf::IntRect target(sourceX, sourceY, sourceW, sourceH);
-    sprite.setTextureRect(target);
-    sprite.setTexture(texture);
 }
 
 bool Unit::selectWeapon(int pos)
@@ -145,16 +125,6 @@ std::string Unit::getType()
 int Unit::getStat(std::string statName)
 {
     return stats[statName].getCurrent();
-}
-
-int Unit::getX(const int tileSize)
-{
-    return (sprite.getGlobalBounds().left / tileSize);
-}
-
-int Unit::getY(const int tileSize)
-{
-    return (sprite.getGlobalBounds().top / tileSize);
 }
 
 Item& Unit::getCurrentWeapon()

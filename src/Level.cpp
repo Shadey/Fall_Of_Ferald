@@ -138,7 +138,7 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 				{
 					std::vector<sf::Vector3i> toHighlight;
 					toHighlight = pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()),
-						unit.getStat("moveRange"), levelWidth, levelHeight);
+						unit.getStat("moveRange"));
 
 					if(!playerUnitSelected)
 						ui.highlightTiles(toHighlight, sf::Color::Cyan, tileSize);

@@ -19,7 +19,7 @@ class Pathfinder
         Pathfinder(Level* currentLevel);
 		Pathfinder() {}
         virtual ~Pathfinder();
-        std::vector<sf::Vector3i> calculateArea(sf::Vector2i start, int range, int mapWidth, int mapHeight);
+        std::vector<sf::Vector3i> calculateArea(sf::Vector2i start, int range); 
         std::vector<sf::Vector2i> getPath(Unit& currentUnit);
 		std::stack<sf::Vector2i> getPath(std::vector<sf::Vector3i> searchRange, sf::Vector2i start, sf::Vector2i target);
         void findPlayerPaths(std::list<Unit>& playerUnits);

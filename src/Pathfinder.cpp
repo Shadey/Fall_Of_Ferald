@@ -46,7 +46,7 @@ Pathfinder::~Pathfinder()
 // TODO: Change function to take a unit reference rather than the start and range values
 //		 This will both cut down on the number of parameters and allow proper terrain
 //		 cost evaluation.
-std::vector<sf::Vector3i> Pathfinder::calculateArea(sf::Vector2i start, int range, int mapWidth, int mapHeight)
+std::vector<sf::Vector3i> Pathfinder::calculateArea(sf::Vector2i start, int range)
 {
     std::vector<sf::Vector3i> expansion;
     int maxSize = 1;
@@ -92,7 +92,7 @@ std::vector<sf::Vector3i> Pathfinder::calculateArea(sf::Vector2i start, int rang
     // Removing non-existant nodes
     for(auto itr = expansion.begin(); itr != expansion.end(); )
     {
-        if(itr->x < 0 || itr->x >= mapWidth || itr->y < 0 || itr->y >= mapHeight)
+        if(itr->x < 0 || itr->x >= levelPtr->getMapSizeX() || itr->y < 0 || itr->y >= levelPtr->getMapSizeY())
         {
             itr = expansion.erase(itr);
         } else ++itr;

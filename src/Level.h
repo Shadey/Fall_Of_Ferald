@@ -26,9 +26,10 @@ class Level
         std::string getTileType(int x, int y);
         int getMapSizeX();
         int getMapSizeY();
+
+		// Accessor methods
 		inline int getTileSize() { return tileSize; }
 		inline AI& getAI() { return combatController; }
-		
 		inline void nextTurn() { if(playerTurn) playerTurn = false; else playerTurn = true; }
 		inline bool isPlayerTurn() { return playerTurn; }
     private:

@@ -137,15 +137,16 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 				if(mousePos.x / tileSize == unit.getX() && mousePos.y / tileSize == unit.getY())
 				{
 					std::vector<sf::Vector3i> toHighlight;
+
 					toHighlight = pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()),
 						unit.getStat("moveRange"));
 
 					if(!playerUnitSelected)
-						ui.highlightTiles(toHighlight, sf::Color::Cyan, tileSize);
+						ui.highlightTiles(toHighlight, ui.friendlyHighlight, tileSize);
 					else
 					{
 						ui.clearHighlight();
-						ui.highlightTiles(toHighlight, sf::Color::Cyan, tileSize);
+						ui.highlightTiles(toHighlight, ui.friendlyHighlight, tileSize);
 					}
 				}
 			}

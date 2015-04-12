@@ -105,6 +105,7 @@ std::vector<sf::Vector3i> Pathfinder::calculateArea(sf::Vector2i start, int rang
 	{
 		// TODO: Proper move cost evaluation
 		//i->z = moveCosts["naval"][levelPtr->getTileType(i->x, i->y)];
+		i->z = moveCosts["foot"]["plain"];
 		i->z += std::abs(start.x - i->x);
 		i->z += std::abs(start.y - i->y);
 

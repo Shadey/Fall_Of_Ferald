@@ -40,7 +40,7 @@ Tile::Tile(int terrainType, sf::Texture& texture)
             terrainDef = 2;
             break;
         case 4:
-            tileType = "sea";
+            tileType = "water";
             terrainDef = 0;
             break;
         default:

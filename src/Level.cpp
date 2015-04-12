@@ -103,7 +103,7 @@ void Level::initilizeAI(const std::string& unitPath, const std::string& spritesh
 		unit.setSprite(imageManager.getTexture(unit.getType()));
 
 	// Adding a unit for the AI to fight, normally these would be loaded from a file but eh.
-	combatController.addEnemyUnit(Unit("test", "tank", 5, 50, 10, 0, 6, 3, 16, 2, 3, 3, 1, 1));
+	combatController.addEnemyUnit(Unit("test", "tank", 5, 50, 10, 0, 6, 3, 16, 2, 3, 3, 1, 3));
 	combatController.getEnemyUnits().back().setSprite(imageManager.getTexture("player"));
 
 	// Initilising the pathfinder
@@ -130,6 +130,8 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 		if(inputManager.pressedOnce(sf::Mouse::Button::Left))
 		{
 			sf::Vector2i mousePos = inputManager.getMousePosition();
+			ui.clearHighlight();
+			playerUnitSelected = false;
 
 			// Checking each unit to see if we've clicked it
 			for(auto &unit : combatController.getEnemyUnits())
@@ -141,13 +143,11 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 					toHighlight = pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()),
 						unit.getStat("moveRange"));
 
-					if(!playerUnitSelected)
-						ui.highlightTiles(toHighlight, ui.friendlyHighlight, tileSize);
-					else
-					{
-						ui.clearHighlight();
-						ui.highlightTiles(toHighlight, ui.friendlyHighlight, tileSize);
-					}
+					ui.highlightTiles(toHighlight, ui.friendlyHighlight, tileSize);
+					playerUnitSelected = true;
+
+					// No need to check the rest of the units
+					break;
 				}
 			}
 		}

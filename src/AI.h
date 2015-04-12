@@ -28,6 +28,7 @@ class AI
 
 		// Accessor methods
 		inline std::list<Unit>& getAvailableUnits() { return availableUnits; }
+		inline std::list<Unit>& getEnemyUnits() { return enemyUnits; }
     private:
         std::list<Unit> availableUnits;	// The units that are available to this AI
         std::list<Unit> enemyUnits;		// The units that are available to an enemy faction ie player.

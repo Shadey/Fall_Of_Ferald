@@ -94,14 +94,16 @@ void Level::initilizeAI(const std::string& unitPath, const std::string& spritesh
     imageManager.loadImage(spritesheetPath + "/mage.png", "mage");
     imageManager.loadImage(spritesheetPath + "/warrior.png", "warrior");
     imageManager.loadImage(spritesheetPath + "/tank.png", "tank");
+	imageManager.loadImage(spritesheetPath + "/player.png", "player");
 
 	// Setting the sprites for the NPC units, works as long as the generic unit
 	// names are the same as the imageManager keys
 	for(auto &unit : combatController.getAvailableUnits())
 		unit.setSprite(imageManager.getTexture(unit.getType()));
 
-	// Adding a unit for the AI to fight
-	
+	// Adding a unit for the AI to fight, normally these would be loaded from a file but eh.
+	combatController.addEnemyUnit(Unit("test", "tank", 5, 50, 10, 0, 6, 3, 16, 2, 3, 3, 1, 1));
+	combatController.getEnemyUnits().back().setSprite(imageManager.getTexture("player"));
 }
 
 void Level::update()
@@ -115,13 +117,12 @@ void Level::update()
 // Method to call the AI's update methods.
 void Level::updateAI()
 {
-	// Updating the sprite positions
+	// Updating the AI's sprite positions
 	for(auto &unit : combatController.getAvailableUnits())
-	{
 		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
-	}
-		
-    //combatController.setEnemyUnits(enemies);
+
+	for(auto &unit: combatController.getEnemyUnits())
+		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
 }
 
 // Draw method, draws the tiles and the AI-controlled units
@@ -139,8 +140,12 @@ void Level::draw(sf::RenderWindow& window)
         }
     }
 
-	// Drawing the units
+	// Drawing the units enemy
 	for(auto &unit : combatController.getAvailableUnits())
+		window.draw(unit.getSprite());
+
+	// Drawing the player units
+	for(auto &unit : combatController.getEnemyUnits())
 		window.draw(unit.getSprite());
 }
 

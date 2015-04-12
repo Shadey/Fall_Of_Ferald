@@ -12,7 +12,7 @@ class Unit
     friend class UnitManager;
     public:
 		Unit(std::string unitName, std::string unitType, int lvl, int health, int strength, int magic, int skill,
-			int defense, int resistance, int luck, int moveRange, int _x, int _y);
+			int speed, int defense, int resistance, int luck, int moveRange, int _x, int _y);
         Unit(std::string unitType, int _x, int _y, int* statArray, int lvl);
         virtual ~Unit();
         void modifyStat(std::string statName, int mod);

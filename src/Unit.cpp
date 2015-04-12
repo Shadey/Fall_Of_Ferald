@@ -1,7 +1,7 @@
 #include "Unit.h"
 
 // Constructor
-Unit::Unit(std::string unitName, std::string unitType, int lvl, int health, int strength, int magic int skill,
+Unit::Unit(std::string unitName, std::string unitType, int lvl, int health, int strength, int magic, int skill,
 	int speed, int defense, int resistance, int luck, int moveRange, int _x, int _y)
 {
 	level = lvl;

@@ -112,12 +112,9 @@ std::vector<sf::Vector3i> Pathfinder::calculateArea(sf::Vector2i start, int rang
 		i->z += std::abs(start.y - i->y);
 		i->z -= 1;
 
-		std::cout << "(" << i->x << "," << i->y << "): " << i->z << std::endl;
-
 		// Removing the node if it's cost is too high
 		if(i->z > maxSize)
 		{
-			std::cout << "### DELETED ABOVE ###" << std::endl;
 			i = expansion.erase(i);
 		}
 		else ++i;

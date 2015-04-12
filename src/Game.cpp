@@ -57,8 +57,7 @@ void Game::update()
 			  inputManager.pressedOnce(sf::Mouse::Left), inputManager.pressedOnce(sf::Mouse::Right));
 
 	// Updating the level
-	testLevel->update();
-	testLevel->nextTurn();
+	testLevel->update(inputManager, ui);
 
 	// Checking if the window's been closed
 	if(inputManager.pressedOnce("cancel"))

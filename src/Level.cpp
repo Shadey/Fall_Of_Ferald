@@ -12,6 +12,7 @@ Level::Level(const std::string& mapPath, const std::string& tileSheetPath, Image
     levelWidth = 0;
     levelHeight = 0;
 	playerTurn = true;
+	playerUnitSelected = false;
 
     std::cout << "loading level" << std::endl;
 
@@ -104,13 +105,48 @@ void Level::initilizeAI(const std::string& unitPath, const std::string& spritesh
 	// Adding a unit for the AI to fight, normally these would be loaded from a file but eh.
 	combatController.addEnemyUnit(Unit("test", "tank", 5, 50, 10, 0, 6, 3, 16, 2, 3, 3, 1, 1));
 	combatController.getEnemyUnits().back().setSprite(imageManager.getTexture("player"));
+
+	// Initilising the pathfinder
+	//pathfinder = Pathfinder(this);
 }
 
-void Level::update()
+void Level::update(InputManager& inputManager, UserInterface& ui)
 {
 	if(!playerTurn)
 	{
 		updateAI();
+		nextTurn();
+	}
+	else
+	{
+		// Checking if the AI's turn has been initiated
+		if(inputManager.pressedOnce("nextTurn"))
+			nextTurn();
+
+		// Displaying a unit's range if the player's unit is clicked for the first time
+		if(inputManager.pressedOnce(sf::Mouse::Button::Left))
+		{
+			sf::Vector2i mousePos = inputManager.getMousePosition();
+
+			// Checking each unit to see if we've clicked it
+			for(auto &unit : combatController.getEnemyUnits())
+			{
+				if(mousePos.x / tileSize == unit.getX() && mousePos.y / tileSize == unit.getY())
+				{
+					std::vector<sf::Vector3i> toHighlight;
+					toHighlight = pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()),
+						unit.getStat("moveRange"), levelWidth, levelHeight);
+
+					if(!playerUnitSelected)
+						ui.highlightTiles(toHighlight, sf::Color::Cyan, tileSize);
+					else
+					{
+						ui.clearHighlight();
+						ui.highlightTiles(toHighlight, sf::Color::Cyan, tileSize);
+					}
+				}
+			}
+		}
 	}
 }
 

@@ -9,6 +9,7 @@ InputManager::InputManager()
     keyBinds["right"] = sf::Keyboard::D;
     keyBinds["confirm"] = sf::Keyboard::Return;
     keyBinds["cancel"] = sf::Keyboard::BackSpace;
+	keyBinds["nextTurn"] = sf::Keyboard::P;
 }
 
 InputManager::~InputManager()

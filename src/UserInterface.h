@@ -28,10 +28,12 @@ class UserInterface
         std::list<Tooltip> getTooltips();
         Tooltip getTooltip(std::string header);
         Tooltip getTooltip(int mouseX, int mouseY);
+
+		// Highlight functions
 		void highlightTiles(std::vector<sf::Vector3i> highlightRange, sf::Color colour, int tileSize);
 		void highlightTiles(std::vector<sf::Vector2i> highlightRange, sf::Color colour, int tileSize);
 		void highlightTiles(std::stack<sf::Vector2i> highlightRange, sf::Color colour, int tileSize);
-		void clearHighlight();
+		inline void clearHighlight() { highlights.clear(); }
 };
 
 #endif // USERINTERFACE_H

@@ -8,14 +8,14 @@
 #include <vector>
 #include <list>
 #include <SFML/System/Vector2.hpp>
-#include "Level.h"
 #include "Unit.h"
 #include <stack>
 
 class Pathfinder
 {
     public:
-        Pathfinder(Level* currentLevel);
+        //Pathfinder(Level* currentLevel);
+		Pathfinder();
         virtual ~Pathfinder();
         std::vector<sf::Vector3i> calculateArea(sf::Vector2i start, int range, int mapWidth, int mapHeight);
         std::vector<sf::Vector2i> getPath(Unit& currentUnit);
@@ -30,7 +30,7 @@ class Pathfinder
         // Stored priority queues representing the paths for Player-controlled
         // units, stops them from being recalculated during down-time.
         std::vector<std::vector<sf::Vector2i>> playerPaths;
-        Level* levelPtr;
+        //Level* levelPtr;
 };
 
 #endif // PATHFINDER_H

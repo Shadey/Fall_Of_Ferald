@@ -130,6 +130,10 @@ std::stack<sf::Vector2i> Pathfinder::getPath(std::vector<sf::Vector3i> searchRan
 	std::vector<sf::Vector3i> adjacentNodes;
 	int cheapest;
 
+	// Returning if the search range is insufficiant
+	if(searchRange.empty())
+		return finalPath;
+
 	// Pushing the start node
 	finalPath.push(target);
 

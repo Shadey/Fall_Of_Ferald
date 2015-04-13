@@ -13,6 +13,9 @@ Level::Level(const std::string& mapPath, const std::string& tileSheetPath, Image
     levelHeight = 0;
 	playerTurn = true;
 	playerUnitSelected = false;
+	hoveredTile = sf::Vector2i(0,0);
+	selectedUnitPos = sf::Vector2i(-1,-1);
+	previouslyHoveredTile = sf::Vector2i(-1,-1);
 
     std::cout << "loading level" << std::endl;
 
@@ -114,6 +117,7 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 {
 	// Updating the sprites
 	combatController.updateSprites(tileSize);
+	sf::Vector2i mousePos = inputManager.getMousePosition();
 
 	if(!playerTurn)
 	{
@@ -126,31 +130,64 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 		if(inputManager.pressedOnce("nextTurn"))
 			nextTurn();
 
+		// Finding the tile that the cursor is hovered over
+		hoveredTile = sf::Vector2i(mousePos.x / tileSize, mousePos.y / tileSize);
+
 		// Displaying a unit's range if the player's unit is clicked for the first time
 		if(inputManager.pressedOnce(sf::Mouse::Button::Left))
 		{
-			sf::Vector2i mousePos = inputManager.getMousePosition();
 			ui.clearHighlight();
 			playerUnitSelected = false;
 
 			// Checking each unit to see if we've clicked it
 			for(auto &unit : combatController.getEnemyUnits())
 			{
-				if(mousePos.x / tileSize == unit.getX() && mousePos.y / tileSize == unit.getY())
+				if(hoveredTile.x == unit.getX() && hoveredTile.y == unit.getY())
 				{
-					std::vector<sf::Vector3i> toHighlight;
 
 					toHighlight = pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()),
 						unit.getStat("moveRange"));
 
-					ui.highlightTiles(toHighlight, ui.friendlyHighlight, tileSize);
+					//ui.highlightTiles(toHighlight, ui.friendlyHighlight, tileSize);
 					playerUnitSelected = true;
+					selectedUnitPos = sf::Vector2i(unit.getX(), unit.getY());
 
 					// No need to check the rest of the units
 					break;
 				}
 			}
 		}
+		// Drawing the path between the selected unit and the mouse
+		if(playerUnitSelected && hoveredTile != previouslyHoveredTile)
+		{
+			bool validTile = false;
+
+			// Checking if the hovered tile in our range
+			for(auto &i : toHighlight)
+			{
+				if(i.x == hoveredTile.x && i.y == hoveredTile.y)
+					validTile = true;
+			}
+
+			if(validTile)
+			{
+				std::stack<sf::Vector2i> pathStack;
+				pathStack = pathfinder.getPath(toHighlight, selectedUnitPos, hoveredTile);
+				ui.clearHighlight();
+
+				ui.highlightTiles(pathStack, ui.enemyHighlight, tileSize);
+
+				// Outputting the stack
+				while(!pathStack.empty())
+				{
+					std::cout << "(" << pathStack.top().x << "," << pathStack.top().y << ")" << std::endl;
+					pathStack.pop();
+				}
+			}
+		}
+
+		// Updating the previous hovered tile
+		previouslyHoveredTile = hoveredTile;
 	}
 }
 

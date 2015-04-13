@@ -38,6 +38,10 @@ class Level
         const int tileSize = 64;
 		bool playerTurn;
 		bool playerUnitSelected;
+		sf::Vector2i hoveredTile;			// The tile the mouse is currently hovering over
+		sf::Vector2i previouslyHoveredTile;
+		std::vector<sf::Vector3i> toHighlight;
+		sf::Vector2i selectedUnitPos;
         Tile** tiles;
         AI combatController;
 		Pathfinder pathfinder;

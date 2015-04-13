@@ -29,7 +29,7 @@ class UserInterface
         Tooltip getTooltip(std::string header);
         Tooltip getTooltip(int mouseX, int mouseY);
 		const sf::Color friendlyHighlight = sf::Color(0, 255, 255, 123);
-		const sf::Color enemyHighlight = sf::Color(0, 255, 255, 123);
+		const sf::Color enemyHighlight = sf::Color(255, 0, 0, 123);
 
 		// Highlight functions
 		void highlightTiles(std::vector<sf::Vector3i> highlightRange, sf::Color colour, int tileSize);

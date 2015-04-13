@@ -36,6 +36,7 @@ class UserInterface
 		void highlightTiles(std::vector<sf::Vector2i> highlightRange, sf::Color colour, int tileSize);
 		void highlightTiles(std::stack<sf::Vector2i> highlightRange, sf::Color colour, int tileSize);
 		inline void clearHighlight() { highlights.clear(); }
+		void clearHighlight(sf::Color colour);
 };
 
 #endif // USERINTERFACE_H

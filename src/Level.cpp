@@ -16,6 +16,7 @@ Level::Level(const std::string& mapPath, const std::string& tileSheetPath, Image
 	hoveredTile = sf::Vector2i(0,0);
 	selectedUnitPos = sf::Vector2i(-1,-1);
 	previouslyHoveredTile = sf::Vector2i(-1,-1);
+	selectedUnit = NULL;
 
     std::cout << "loading level" << std::endl;
 
@@ -118,6 +119,7 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 	// Updating the sprites
 	combatController.updateSprites(tileSize);
 	sf::Vector2i mousePos = inputManager.getMousePosition();
+	//selectedUnit = NULL;
 
 	if(!playerTurn)
 	{
@@ -148,15 +150,49 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 					toHighlight = pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()),
 						unit.getStat("moveRange"));
 
-					//ui.highlightTiles(toHighlight, ui.friendlyHighlight, tileSize);
+					ui.highlightTiles(toHighlight, ui.friendlyHighlight, tileSize);
 					playerUnitSelected = true;
 					selectedUnitPos = sf::Vector2i(unit.getX(), unit.getY());
+					selectedUnit = &unit;
 
 					// No need to check the rest of the units
 					break;
 				}
 			}
+
+			// Moving the selected unit, if we didn't select it this frame
+			if(selectedUnit != NULL && !playerUnitSelected)
+			{
+				bool changeTurn = true;
+
+				// Only move the unit if it hasn't been moved this turn
+				if(!selectedUnit->getMoved())
+				{
+				// Only moving within the moverange
+					for(auto &tile : toHighlight)
+					{
+						if(hoveredTile.x == tile.x && hoveredTile.y == tile.y)
+						{
+							selectedUnit->setPosition(hoveredTile.x, hoveredTile.y, tileSize);
+							break;
+						}
+					}
+				}
+				selectedUnit->setMoved(true);
+				selectedUnit = NULL;
+
+				// Changing turn if all the player units have been used
+				for(auto &unit : combatController.getEnemyUnits())
+				{
+					if(!unit.getMoved())
+						changeTurn = false;
+				}
+
+				if(changeTurn)
+					nextTurn();
+			}
 		}
+
 		// Drawing the path between the selected unit and the mouse
 		if(playerUnitSelected && hoveredTile != previouslyHoveredTile)
 		{
@@ -173,16 +209,9 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 			{
 				std::stack<sf::Vector2i> pathStack;
 				pathStack = pathfinder.getPath(toHighlight, selectedUnitPos, hoveredTile);
-				ui.clearHighlight();
+				ui.clearHighlight(ui.enemyHighlight);
 
 				ui.highlightTiles(pathStack, ui.enemyHighlight, tileSize);
-
-				// Outputting the stack
-				while(!pathStack.empty())
-				{
-					std::cout << "(" << pathStack.top().x << "," << pathStack.top().y << ")" << std::endl;
-					pathStack.pop();
-				}
 			}
 		}
 
@@ -201,6 +230,12 @@ void Level::updateAI()
 	for(auto &unit: combatController.getEnemyUnits())
 		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
 	*/
+	for(auto &unit : combatController.getEnemyUnits())
+	{
+		std::list<Unit> possibleTargets;
+		possibleTargets = combatController.getPossibleTargets(unit,
+			pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()), unit.getStat("moveRange")));
+	}
 }
 
 // Draw method, draws the tiles and the AI-controlled units
@@ -240,6 +275,22 @@ std::string Level::getTileType(int x, int y)
         // tile is ignored by the pathfinder.
         return "wall";
     }
+}
+
+void Level::nextTurn()
+{
+	if(playerTurn)
+	{
+		playerTurn = false;
+		for(auto &unit : combatController.getAvailableUnits())
+			unit.setMoved(false);
+	}
+	else
+	{
+		playerTurn = true;
+		for(auto &unit : combatController.getEnemyUnits())
+			unit.setMoved(false);
+	}
 }
 
 Tile Level::getTile(int x, int y) {return tiles[x][y];}

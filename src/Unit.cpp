@@ -5,6 +5,7 @@ Unit::Unit(std::string unitName, std::string unitType, int lvl, int health, int 
 	int speed, int defense, int resistance, int luck, int moveRange, int _x, int _y)
 {
 	level = lvl;
+	moved = false;
 
     // Initilizing the unit's stats
     stats["health"] = Stat(health);
@@ -34,6 +35,7 @@ Unit::Unit(std::string unitType, int _x, int _y, int* statArray, int lvl)
 
     // Setting the unit's level
     level = lvl;
+	moved = false;
 
     stats["health"]     = Stat(statArray[0]);
     stats["strength"]   = Stat(statArray[1]);
@@ -147,4 +149,14 @@ int Unit::getMaxRange()
     }
 
     return maxRange;
+}
+
+void Unit::setPosition(int newX, int newY, int tileSize)
+{
+	// Setting the unit's position on the grid
+	x = newX;
+	y = newY;
+
+	// Setting the sprite's position
+	sprite.setPosition(x * tileSize, y * tileSize);
 }

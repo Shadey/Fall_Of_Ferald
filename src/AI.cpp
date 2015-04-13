@@ -174,6 +174,22 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
     unitFile.close();
 }
 
+std::list<Unit> AI::getPossibleTargets(Unit& currentUnit, std::vector<sf::Vector3i> attackRange)
+{
+	std::list<Unit> possibleTargets;
+
+	for(auto &attackItr : attackRange)
+	{
+		for(auto &unitItr : enemyUnits)
+		{
+			if(unitItr.getX() == attackItr.x && unitItr.getY() == attackItr.y)
+				possibleTargets.push_back(unitItr);
+		}
+	}
+
+	return possibleTargets;
+}
+
 std::list<Unit> AI::getPossibleTargets(Unit& currentUnit, Tile** const levelMap)
 {
     std::list<Unit>::iterator unitItr;
@@ -258,6 +274,46 @@ void AI::updateSprites(const int& tileSize)
 
 	for(auto &unit : availableUnits)
 		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
+}
+
+
+Unit* AI::selectTarget(std::list<Unit> possibleTargets, Unit& currentUnit)
+{
+	Unit* finalTarget = NULL;
+	float heuristic = -1;
+	bool killChance;
+	bool certainKill;
+
+	for(auto enemy : possibleTargets)
+	{
+		float hitChance = currentUnit.getStat("skill") - (enemy.getStat("skill") / 2);	// + wep_hitchance
+		float critChance = currentUnit.getStat("skill") / 10;
+		float totalDamage = 10;	// static until weapons get reworked
+
+		// weapon triangle stuff should go here
+		
+		if(totalDamage > enemy.getStat("health"))
+		{
+			killChance = true;
+			if(hitChance >= 100)
+				certainKill = true;
+		}
+		
+		// Calculating the final heuristic
+		float tempHeuristic = 0;
+		if(killChance) tempHeuristic += 100;
+		if(certainKill) tempHeuristic += 200;
+		tempHeuristic += hitChance;
+		tempHeuristic += critChance / 4;
+
+		// Selecting the target
+		if(tempHeuristic > heuristic)
+		{
+			finalTarget = &enemy;
+		}
+	}
+
+	return finalTarget;
 }
 
 void AI::setMapDimensions(int width, int height)

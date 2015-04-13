@@ -162,3 +162,16 @@ void UserInterface::highlightTiles(std::stack<sf::Vector2i> highlightRange, sf::
 		highlightRange.pop();
 	}
 }
+
+// Clearing highlights of a certain colour
+void UserInterface::clearHighlight(sf::Color colour)
+{
+	//for(int i = 0; i < highlights.size() ; )
+	for(auto i = highlights.begin(); i != highlights.end() ; )
+	{
+		if(i->getColour() == colour)
+			highlights.erase(i);
+		else i++;
+	}
+}
+

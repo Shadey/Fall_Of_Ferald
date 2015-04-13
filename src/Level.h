@@ -30,7 +30,8 @@ class Level
 		// Accessor methods
 		inline int getTileSize() { return tileSize; }
 		inline AI& getAI() { return combatController; }
-		inline void nextTurn() { if(playerTurn) playerTurn = false; else playerTurn = true; }
+		//inline void nextTurn() { if(playerTurn) playerTurn = false; else playerTurn = true; }
+		void nextTurn();
 		inline bool isPlayerTurn() { return playerTurn; }
     private:
         int levelWidth;
@@ -42,6 +43,7 @@ class Level
 		sf::Vector2i previouslyHoveredTile;
 		std::vector<sf::Vector3i> toHighlight;
 		sf::Vector2i selectedUnitPos;
+		Unit* selectedUnit;
         Tile** tiles;
         AI combatController;
 		Pathfinder pathfinder;

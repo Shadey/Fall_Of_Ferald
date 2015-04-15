@@ -1,5 +1,5 @@
 # HP,Str,Mag,Skl,Spd,Def,Res,Lck,Mov
 # Base Stats
-16,04,3,4,2,3,7,5,3
+16,4,3,4,2,3,7,5,4
 # Growths
 35,0,20,20,20,5,10,0,0

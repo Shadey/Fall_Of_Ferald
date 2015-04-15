@@ -19,11 +19,7 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
     std::stringstream convert;
     std::stringstream ss;
 
-    // Arrays to store the stats and growths temporarily
-    int baseStats[statCount] = {0,0,0,0,0,0,0,0,0};
-    int growths[statCount] = {0,0,0,0,0,0,0,0,0};
-    int finalStats[statCount] = {0,0,0,0,0,0,0,0,0};
-    int tempX = 0;
+	int tempX = 0;
     int tempY = 0;
     int tempLvl = 0;
 
@@ -41,6 +37,11 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
         // For every unit that has to be loaded
         while(std::getline(unitFile,unitLine))
         {
+    		// Arrays to store the stats and growths temporarily
+  			int baseStats[statCount] =	{0,0,0,0,0,0,0,0,0};
+    		int growths[statCount] =	{0,0,0,0,0,0,0,0,0};
+    		int finalStats[statCount] = {0,0,0,0,0,0,0,0,0};
+	
             ss.str(unitLine);
             std::cout << std::endl;
             std::cout << "Creating a unit with the following values: \n";
@@ -150,6 +151,7 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
             {
                 finalStats[k] += baseStats[k];
                 std::cout << "Base Stat: " << baseStats[k];
+				std::cout << "\t Final pre increment: " << finalStats[k] << std::endl;
                 int rng;
                 for(int j = 0; j < tempLvl - 1; j++)
                 {
@@ -161,7 +163,7 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
                         finalStats[k]++;
                     }
                 }
-                std::cout << ", Final: " << finalStats[k] << std::endl;
+	            std::cout << ", Final: " << finalStats[k] << std::endl;
             }
             std::cout << std::endl;
 
@@ -277,7 +279,7 @@ void AI::updateSprites(const int& tileSize)
 }
 
 
-Unit* AI::selectTarget(std::list<Unit> possibleTargets, Unit& currentUnit)
+Unit* AI::selectTarget(std::list<Unit>& possibleTargets, Unit& currentUnit)
 {
 	Unit* finalTarget = NULL;
 	float heuristic = -1;
@@ -314,6 +316,19 @@ Unit* AI::selectTarget(std::list<Unit> possibleTargets, Unit& currentUnit)
 	}
 
 	return finalTarget;
+}
+
+sf::Vector2f AI::selectPosition(std::vector<sf::Vector3i> validRange)
+{
+	auto bestItr = validRange.begin();
+
+	for(auto itr = validRange.begin(); itr != validRange.end(); ++itr)
+	{
+		if(itr->z > bestItr->z)
+			bestItr = itr;
+	}
+
+	return sf::Vector2f(bestItr->x, bestItr->y);
 }
 
 void AI::setMapDimensions(int width, int height)

@@ -146,7 +146,6 @@ void UserInterface::highlightTiles(std::vector<sf::Vector2i> highlightRange, sf:
 
 void UserInterface::highlightTiles(std::vector<sf::Vector3i> highlightRange, sf::Color colour, int tileSize)
 {
-	std::cout << "Highlighting " << highlightRange.size() << " tiles!" << std::endl;
 	for(auto itr = highlightRange.begin(); itr != highlightRange.end(); ++itr)
 	{
 		highlights.push_back(TileHighlight(itr->x, itr->y, colour, tileSize));

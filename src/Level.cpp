@@ -223,19 +223,62 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 // Method to call the AI's update methods.
 void Level::updateAI()
 {
-	/* Updating the AI's sprite positions
 	for(auto &unit : combatController.getAvailableUnits())
-		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
-
-	for(auto &unit: combatController.getEnemyUnits())
-		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
-	*/
-	for(auto &unit : combatController.getEnemyUnits())
 	{
-		std::list<Unit> possibleTargets;
-		possibleTargets = combatController.getPossibleTargets(unit,
-			pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()), unit.getStat("moveRange")));
+		std::list<Unit> possibleTargets;		// What the AI controlled unit can attack
+		std::vector<sf::Vector3i> moveRange;	// Where the AI controlled unit can move to
+
+		// Finding the moveRange
+		moveRange = pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()), unit.getStat("moveRange"));
+
+		// Searching for possible targets based on the moveRange
+		possibleTargets = combatController.getPossibleTargets(unit, moveRange);
+
+		// If there were valid targets within the unit's attack range
+		if(possibleTargets.size() != 0)
+		{
+			Unit* target = combatController.selectTarget(possibleTargets, unit);
+
+			// Ensuring that target isn't null, it shouldn't be but it doesn't hurt to check
+			if(target != NULL)
+			{
+				// Where the AI can attack the target from on the map
+				std::vector<sf::Vector3i> validPositions;
+				std::vector<sf::Vector3i> tempPositions;
+
+				tempPositions = pathfinder.calculateArea(sf::Vector2i(target->getX(), target->getY()),
+					unit.getStat("moveRange"));	// WIll be changed to attack range once weapons are reworked
+
+				// Finding the valid positions
+				for(auto &outer : moveRange)
+				{
+					for(auto &inner : tempPositions)
+					{
+						if(outer.x == inner.x && outer.y == inner.y)
+						{
+							int x = inner.x;
+							int y = inner.y;
+							validPositions.push_back(sf::Vector3i(x, y, tiles[x][y].terrainDef));
+						}
+					}
+				}
+
+				// Selecting the best tile to attack from
+				sf::Vector2f bestPosition = combatController.selectPosition(validPositions);
+				bestPosition.x += tileSize;
+				bestPosition.y += tileSize;
+				unit.setPosition(bestPosition);
+
+				// TODO: Fix infinte loop
+			}
+
+			// Updating the unit's sprite
+			unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
+
+			// Actual attacking should go here
+		}
 	}
+
 }
 
 // Draw method, draws the tiles and the AI-controlled units

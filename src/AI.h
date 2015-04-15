@@ -23,7 +23,8 @@ class AI
 		bool parseFile(const std::string fileLocation, bool gettingGrowthRates);
         std::list<Unit> getPossibleTargets(Unit& currentUnit, Tile** const levelMap);
 		std::list<Unit> getPossibleTargets(Unit& currentUnit, std::vector<sf::Vector3i> attackRange);
-		Unit* selectTarget(std::list<Unit> possibleTargets, Unit& currentUnit);
+		Unit* selectTarget(std::list<Unit>& possibleTargets, Unit& currentUnit);
+		sf::Vector2f selectPosition(std::vector<sf::Vector3i> validRange);
         void setMapDimensions(int width, int height);
 		void updateSprites(const int& tileSize);
 		inline void addEnemyUnit(Unit unit) { enemyUnits.push_back(unit); }

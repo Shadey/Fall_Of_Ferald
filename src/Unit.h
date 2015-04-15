@@ -30,6 +30,7 @@ class Unit
 		inline bool getMoved() { return moved; }
 		inline void setMoved(bool val) { moved = val; }
 		void setPosition(int newX, int newY, int tileSize);	
+		inline void setPosition(sf::Vector2f newPos) { sprite.setPosition(newPos); }
 
         // Structure used to store unit statisitics and modifiers
         struct Stat

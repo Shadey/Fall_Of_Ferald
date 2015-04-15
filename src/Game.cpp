@@ -42,12 +42,12 @@ void Game::update()
     std::vector<sf::Vector3i> locations;
 	std::stack<sf::Vector2i> path;
 
-	while(window.pollEvent(event))
+	/*while(window.pollEvent(event))
 	{
 		switch(event.type)
 		{
 		}
-	}
+	}*/
 
 	// Updating the input manager
 	inputManager.update(window);

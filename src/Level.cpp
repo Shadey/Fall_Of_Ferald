@@ -232,7 +232,7 @@ void Level::updateAI()
 		moveRange = pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()), unit.getStat("moveRange"));
 
 		// Searching for possible targets based on the moveRange
-		possibleTargets = combatController.getPossibleTargets(unit, moveRange);
+		possibleTargets = combatController.getPossibleTargets(moveRange);
 
 		// If there were valid targets within the unit's attack range
 		if(possibleTargets.size() != 0)
@@ -246,8 +246,11 @@ void Level::updateAI()
 				std::vector<sf::Vector3i> validPositions;
 				std::vector<sf::Vector3i> tempPositions;
 
-				tempPositions = pathfinder.calculateArea(sf::Vector2i(target->getX(), target->getY()),
-					unit.getStat("moveRange"));	// WIll be changed to attack range once weapons are reworked
+				// calculateArea breaks if the pos vector is constructed in the function call. No idea why.
+				sf::Vector2i pos(target->getX(), target->getY());
+				tempPositions = pathfinder.calculateArea(pos, unit.getStat("moveRange"));
+
+				std::cout << std::endl << unit.getType() << " attacking !" << std::endl;
 
 				// Finding the valid positions
 				for(auto &outer : moveRange)
@@ -268,8 +271,6 @@ void Level::updateAI()
 				bestPosition.x += tileSize;
 				bestPosition.y += tileSize;
 				unit.setPosition(bestPosition);
-
-				// TODO: Fix infinte loop
 			}
 
 			// Updating the unit's sprite
@@ -277,6 +278,8 @@ void Level::updateAI()
 
 			// Actual attacking should go here
 		}
+		else	// DEBUG
+			std::cout << unit.getType() << " has zero targets!" << std::endl;
 	}
 
 }

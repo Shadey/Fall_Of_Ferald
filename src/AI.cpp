@@ -176,7 +176,7 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
     unitFile.close();
 }
 
-std::list<Unit> AI::getPossibleTargets(Unit& currentUnit, std::vector<sf::Vector3i> attackRange)
+std::list<Unit> AI::getPossibleTargets(std::vector<sf::Vector3i> attackRange)
 {
 	std::list<Unit> possibleTargets;
 

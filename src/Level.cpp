@@ -248,7 +248,7 @@ void Level::updateAI()
 
 				// calculateArea breaks if the pos vector is constructed in the function call. No idea why.
 				sf::Vector2i pos(target->getX(), target->getY());
-				tempPositions = pathfinder.calculateArea(pos, unit.getStat("moveRange"));
+				tempPositions = pathfinder.calculateArea(pos, 1); // Using 1 'till weapons are done
 
 				std::cout << std::endl << unit.getType() << " attacking !" << std::endl;
 
@@ -268,9 +268,10 @@ void Level::updateAI()
 
 				// Selecting the best tile to attack from
 				sf::Vector2f bestPosition = combatController.selectPosition(validPositions);
-				bestPosition.x += tileSize;
-				bestPosition.y += tileSize;
-				unit.setPosition(bestPosition);
+
+				std::cout << "Best position: (" << bestPosition.x << "," << bestPosition.y << ")" << std::endl;
+				std::cout << "Current position: (" << unit.getX() << "," << unit.getY() << ")" << std::endl;
+				unit.setPosition(bestPosition, tileSize);
 			}
 
 			// Updating the unit's sprite

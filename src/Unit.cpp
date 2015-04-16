@@ -160,3 +160,13 @@ void Unit::setPosition(int newX, int newY, int tileSize)
 	// Setting the sprite's position
 	sprite.setPosition(x * tileSize, y * tileSize);
 }
+
+void Unit::setPosition(sf::Vector2f newPos, int tileSize)
+{
+	// Setting the unit's position on the grid
+	x = newPos.x;
+	y = newPos.y;
+
+	// Setting the sprite's position
+	sprite.setPosition(x * tileSize, y * tileSize);
+}

@@ -4,6 +4,10 @@
 #include <iostream>
 #include <deque>
 
+// Headers for timing & threading
+#include "DebugLogger.h"
+#include <chrono>
+
 AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
 {
     mapWidth = -1;
@@ -360,6 +364,9 @@ AI::AI()
 
 void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 {
+	// Starting timing
+	std::chrono::steady_clock::time_point timerStart = std::chrono::steady_clock::now();
+
 	for(auto &unit : getAvailableUnits())
 	{
 		std::list<Unit*> possibleTargets;		// What the AI controlled unit can attack
@@ -459,4 +466,12 @@ void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 			unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
 		}
 	}
+
+	// Stopping the timer
+	std::chrono::steady_clock::time_point timerEnd = std::chrono::steady_clock::now();
+	auto timeTaken = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart).count();
+	std::cout << std::endl << "Updating took " << timeTaken << " micro seconds." << std::endl;
+
+	DebugLogger debugLog;
+	debugLog.outputTiming(timeTaken);
 }

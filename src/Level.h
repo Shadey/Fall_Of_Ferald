@@ -46,6 +46,9 @@ class Level
         Tile** tiles;
         AI combatController;
 		Pathfinder pathfinder;
+
+		void drawPlayerUnits(sf::RenderWindow* window);
+		void drawAIUnits(sf::RenderWindow* window);
 };
 
 #endif // LEVEL_H

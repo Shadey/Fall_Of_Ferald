@@ -7,6 +7,7 @@
 // Headers for timing & threading
 #include "DebugLogger.h"
 #include <chrono>
+#include <thread>
 
 AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
 {
@@ -35,6 +36,7 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
     // Stuff for randomization
     std::mt19937 gen(std::time(NULL));
     std::uniform_int_distribution<int> dis(1,100);
+
 
     if(unitFile.good())
     {
@@ -180,9 +182,9 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
     unitFile.close();
 }
 
-std::vector<Unit*> AI::getPossibleTargets(std::vector<sf::Vector3i> attackRange)
+std::list<Unit*> AI::getPossibleTargets(std::vector<sf::Vector3i> attackRange)
 {
-	std::vector<Unit*> possibleTargets;
+	std::list<Unit*> possibleTargets;
 
 	for(auto &attackItr : attackRange)
 	{
@@ -196,10 +198,10 @@ std::vector<Unit*> AI::getPossibleTargets(std::vector<sf::Vector3i> attackRange)
 	return possibleTargets;
 }
 
-std::vector<Unit> AI::getPossibleTargets(Unit& currentUnit, Tile** const levelMap)
+std::list<Unit> AI::getPossibleTargets(Unit& currentUnit, Tile** const levelMap)
 {
-    std::vector<Unit>::iterator unitItr;
-    std::vector<Unit> value;
+    std::list<Unit>::iterator unitItr;
+    std::list<Unit> value;
     int** costs; // The costs to traverse each node in the map
     int range = currentUnit.getMaxRange() + currentUnit.getStat("moveRange");
 
@@ -292,7 +294,7 @@ void AI::outputPositions()
 }
 
 
-Unit* AI::selectTarget(std::vector<Unit*>& possibleTargets, Unit& currentUnit)
+Unit* AI::selectTarget(std::list<Unit*>& possibleTargets, Unit& currentUnit)
 {
 	Unit* finalTarget = NULL;
 	float heuristic = -1;
@@ -369,7 +371,7 @@ void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 
 	for(auto &unit : getAvailableUnits())
 	{
-		std::vector<Unit*> possibleTargets;		// What the AI controlled unit can attack
+		std::list<Unit*> possibleTargets;		// What the AI controlled unit can attack
 		std::vector<sf::Vector3i> moveRange;	// Where the AI controlled unit can move to
 
 		// Finding the moveRange

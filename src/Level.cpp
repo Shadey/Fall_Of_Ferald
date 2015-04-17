@@ -2,6 +2,8 @@
 #include <sstream>
 #include <iostream>
 #include "Unit.h"
+#include <thread>
+#include <functional>
 
 Level::Level(const std::string& mapPath, const std::string& tileSheetPath, ImageManager* imageManager)
 {
@@ -225,25 +227,48 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 // Draw method, draws the tiles and the AI-controlled units
 void Level::draw(sf::RenderWindow& window)
 {
+	// Threads to draw the units simultaniously
+	std::thread threads[2];
+
     // Unit iterator
     std::list<Unit>::iterator cUnitItr;
 
     // Drawing the tiles
-    for(int i = 0; i < levelWidth; i++)
+    for(int i = 0; i < levelHeight; i++)
     {
-        for(int j = 0; j < levelHeight; j++)
+        for(int j = 0; j < levelWidth; j++)
         {
-            window.draw(tiles[i][j].getSprite());
+            window.draw(tiles[j][i].getSprite());
         }
     }
 
-	// Drawing the units enemy
+	// Drawing the units
+	threads[0] = std::thread(std::mem_fun(&Level::drawPlayerUnits), &window);
+	threads[1] = std::thread(std::mem_fun(&Level::drawAIUnits), &window);
+
+	// Joining the threads
+	for(int i = 0; i < 2; ++i)
+		threads[i].join();
+
+	/*// Drawing the units enemy
 	for(auto &unit : combatController.getAvailableUnits())
 		window.draw(unit.getSprite());
 
 	// Drawing the player units
 	for(auto &unit : combatController.getEnemyUnits())
-		window.draw(unit.getSprite());
+		window.draw(unit.getSprite());*/
+}
+
+void Level::drawAIUnits(sf::RenderWindow* window)
+{
+	for(auto &unit : combatController.getAvailableUnits())
+		window->draw(unit.getSprite());
+}
+
+void Level::drawPlayerUnits(sf::RenderWindow* window)
+{
+	for(auto &unit : combatController.getEnemyUnits())
+		window->draw(unit.getSprite());
 }
 
 std::string Level::getTileType(int x, int y)

@@ -455,7 +455,10 @@ void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 					for(auto itr = enemyUnits.begin(); itr != enemyUnits.end() ; )
 					{
 						if(target == &*itr)
+						{
+							target = NULL;
 							itr = enemyUnits.erase(itr);
+						}
 						else ++itr;
 					}
 				}

@@ -18,6 +18,7 @@ class Game
         virtual ~Game();
         void run();
         void render();
+        static void* renderThread(void* args);
         void update();
     private:
         ImageManager imageManager;

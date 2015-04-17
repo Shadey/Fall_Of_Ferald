@@ -26,11 +26,21 @@ void Game::run()
     //sf::Clock clock;
     window.setFramerateLimit(60);
 
+	// Deactivating the window's openGL context
+	window.setActive(false);
+
+	// Launching the rendering thread
+	//sf::Thread thread(&Game::renderThread, &window);
+	sf::Thread thread(&Game::renderThread, this);
+	thread.launch();
+
     while (!close)
     {
         update();
-        render();
+        //render();
     }
+
+	//thread.wait();
 }
 
 void Game::update()
@@ -72,6 +82,15 @@ void Game::update()
 	}
 }
 
+void* Game::renderThread(void* args)
+{
+    /*window->clear();
+    testLevel->draw(*window);
+	ui.draw(window);
+    window->display();*/
+	((Game*)args)->render();
+	return NULL;
+}
 void Game::render()
 {
     window.clear();

@@ -3,7 +3,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-list (APPEND CMAKE_CXX_FLAGS "-w -g -std=c++11${CMAKE_CXX_FLAGS}")
+list (APPEND CMAKE_CXX_FLAGS "-w -g -std=c++11${CMAKE_CXX_FLAGS} -lX11")
 
 file(GLOB SRCS *.cpp *.h)
 

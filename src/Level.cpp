@@ -130,7 +130,8 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 	{
 		// Checking if the AI's turn has been initiated
 		if(inputManager.pressedOnce("nextTurn"))
-			nextTurn();
+			//nextTurn();
+		combatController.outputPositions();
 
 		// Finding the tile that the cursor is hovered over
 		hoveredTile = sf::Vector2i(mousePos.x / tileSize, mousePos.y / tileSize);
@@ -225,7 +226,7 @@ void Level::updateAI()
 {
 	for(auto &unit : combatController.getAvailableUnits())
 	{
-		std::list<Unit> possibleTargets;		// What the AI controlled unit can attack
+		std::list<Unit*> possibleTargets;		// What the AI controlled unit can attack
 		std::vector<sf::Vector3i> moveRange;	// Where the AI controlled unit can move to
 
 		// Finding the moveRange
@@ -266,12 +267,45 @@ void Level::updateAI()
 					}
 				}
 
+				// TODO
+				// Preventing units moving onto the same tile
+				// It's not working ;_;
+/*
+				for(auto &itr : combatController.getAvailableUnits())
+				{
+					if(itr.getX() != unit.getX() && itr.getY() != unit.getY())
+					{
+						for(auto posItr = validPositions.begin(); posItr != validPositions.end() ; )
+						{
+							if(posItr->x == itr.getX() && posItr->y == itr.getY())
+								posItr = validPositions.erase(posItr);
+							else ++posItr;
+						}
+					}
+				}
+				for(auto &itr : combatController.getEnemyUnits())
+				{
+					if(itr.getX() == unit.getX() && itr.getY() == unit.getY())
+					{
+						for(auto posItr = validPositions.begin(); posItr != validPositions.end() ; )
+						{
+							if(posItr->x == itr.getX() && posItr->y == itr.getY())
+								posItr = validPositions.erase(posItr);
+							else ++posItr;
+						}
+					}
+				}
+*/
 				// Selecting the best tile to attack from
-				sf::Vector2f bestPosition = combatController.selectPosition(validPositions);
+				if(validPositions.size() != 0)	// Only move if there's a valid position
+				{
+					sf::Vector2f bestPosition = combatController.selectPosition(validPositions);
+					unit.setPosition(bestPosition, tileSize);
+				}
 
-				std::cout << "Best position: (" << bestPosition.x << "," << bestPosition.y << ")" << std::endl;
-				std::cout << "Current position: (" << unit.getX() << "," << unit.getY() << ")" << std::endl;
-				unit.setPosition(bestPosition, tileSize);
+				// Attacking the target
+				target->modifyStat("health", 10);	// 10 is a temp value until weapons are redone
+				std::cout << "The target's health is " << target->getStat("health") << std::endl;
 			}
 
 			// Updating the unit's sprite
@@ -279,8 +313,6 @@ void Level::updateAI()
 
 			// Actual attacking should go here
 		}
-		else	// DEBUG
-			std::cout << unit.getType() << " has zero targets!" << std::endl;
 	}
 
 }

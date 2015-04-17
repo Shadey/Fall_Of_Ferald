@@ -176,16 +176,16 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
     unitFile.close();
 }
 
-std::list<Unit> AI::getPossibleTargets(std::vector<sf::Vector3i> attackRange)
+std::list<Unit*> AI::getPossibleTargets(std::vector<sf::Vector3i> attackRange)
 {
-	std::list<Unit> possibleTargets;
+	std::list<Unit*> possibleTargets;
 
 	for(auto &attackItr : attackRange)
 	{
 		for(auto &unitItr : enemyUnits)
 		{
 			if(unitItr.getX() == attackItr.x && unitItr.getY() == attackItr.y)
-				possibleTargets.push_back(unitItr);
+				possibleTargets.push_back(&unitItr);
 		}
 	}
 
@@ -278,8 +278,17 @@ void AI::updateSprites(const int& tileSize)
 		unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
 }
 
+void AI::outputPositions()
+{
+	for(auto &unit : availableUnits)
+		std::cout << unit.getType() << " located at (" << unit.getX() << "," << unit.getY() << ")" << std::endl;
 
-Unit* AI::selectTarget(std::list<Unit>& possibleTargets, Unit& currentUnit)
+	for(auto &unit : enemyUnits)
+		std::cout << "enemy located at (" << unit.getX() << "," << unit.getY() << ")" << std::endl;
+}
+
+
+Unit* AI::selectTarget(std::list<Unit*>& possibleTargets, Unit& currentUnit)
 {
 	Unit* finalTarget = NULL;
 	float heuristic = -1;
@@ -288,13 +297,16 @@ Unit* AI::selectTarget(std::list<Unit>& possibleTargets, Unit& currentUnit)
 
 	for(auto enemy : possibleTargets)
 	{
-		float hitChance = currentUnit.getStat("skill") - (enemy.getStat("skill") / 2);	// + wep_hitchance
+		float hitChance = currentUnit.getStat("skill") - (enemy->getStat("skill") / 2);	// + wep_hitchance
+		//float hitChance = currentUnit.getStat("skill") - (enemy.getStat("skill") / 2);	// + wep_hitchance
 		float critChance = currentUnit.getStat("skill") / 10;
+		//float critChance = currentUnit.getStat("skill") / 10;
 		float totalDamage = 10;	// static until weapons get reworked
 
 		// weapon triangle stuff should go here
 		
-		if(totalDamage > enemy.getStat("health"))
+		if(totalDamage > enemy->getStat("health"))
+		//if(totalDamage > enemy.getStat("health"))
 		{
 			killChance = true;
 			if(hitChance >= 100)
@@ -311,7 +323,7 @@ Unit* AI::selectTarget(std::list<Unit>& possibleTargets, Unit& currentUnit)
 		// Selecting the target
 		if(tempHeuristic > heuristic)
 		{
-			finalTarget = &enemy;
+			finalTarget = enemy;
 		}
 	}
 

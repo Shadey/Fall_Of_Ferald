@@ -1,0 +1,14 @@
+# Author: Xemerau
+# Date:	17 March 2013
+
+# Simple Cmake Setup, utilises a single subdirectory (src) and adds all C++
+# source files to the project
+
+# cmake is forwards compatable, but not always backwards compatable. So a
+# minimum version must be specified.
+cmake_minimum_required(VERSION 3.1)	# for now I'm just using the version I have installed
+
+project(fall_of_ferald) # defining the project's name
+
+add_subdirectory(src)	# adding a subdirectory, cmake will look here for an
+						# additional CMakeLists.txt file.

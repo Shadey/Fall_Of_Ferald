@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <SFML/System/Vector2.hpp>
 #include <list>
+#include <thread>
 
 Game::Game()
 {
@@ -31,16 +32,18 @@ void Game::run()
 
 	// Launching the rendering thread
 	//sf::Thread thread(&Game::renderThread, &window);
-	sf::Thread thread(&Game::renderThread, this);
-	thread.launch();
+	//std::thread renderThread(&Game::renderThread, this);
+	//thread.launch();
 
     while (!close)
     {
+		std::thread renderThread(&Game::renderThread, this);
         update();
         //render();
+		renderThread.join();
     }
 
-	//thread.wait();
+	//renderThread.join();
 }
 
 void Game::update()
@@ -93,6 +96,9 @@ void* Game::renderThread(void* args)
 }
 void Game::render()
 {
+	/*sf::Context context;
+	context.setActive(true);*/
+	window.setActive(true);
     window.clear();
     testLevel->draw(window);
 	ui.draw(&window);

@@ -180,9 +180,9 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
     unitFile.close();
 }
 
-std::list<Unit*> AI::getPossibleTargets(std::vector<sf::Vector3i> attackRange)
+std::vector<Unit*> AI::getPossibleTargets(std::vector<sf::Vector3i> attackRange)
 {
-	std::list<Unit*> possibleTargets;
+	std::vector<Unit*> possibleTargets;
 
 	for(auto &attackItr : attackRange)
 	{
@@ -196,10 +196,10 @@ std::list<Unit*> AI::getPossibleTargets(std::vector<sf::Vector3i> attackRange)
 	return possibleTargets;
 }
 
-std::list<Unit> AI::getPossibleTargets(Unit& currentUnit, Tile** const levelMap)
+std::vector<Unit> AI::getPossibleTargets(Unit& currentUnit, Tile** const levelMap)
 {
-    std::list<Unit>::iterator unitItr;
-    std::list<Unit> value;
+    std::vector<Unit>::iterator unitItr;
+    std::vector<Unit> value;
     int** costs; // The costs to traverse each node in the map
     int range = currentUnit.getMaxRange() + currentUnit.getStat("moveRange");
 
@@ -292,7 +292,7 @@ void AI::outputPositions()
 }
 
 
-Unit* AI::selectTarget(std::list<Unit*>& possibleTargets, Unit& currentUnit)
+Unit* AI::selectTarget(std::vector<Unit*>& possibleTargets, Unit& currentUnit)
 {
 	Unit* finalTarget = NULL;
 	float heuristic = -1;
@@ -369,7 +369,7 @@ void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 
 	for(auto &unit : getAvailableUnits())
 	{
-		std::list<Unit*> possibleTargets;		// What the AI controlled unit can attack
+		std::vector<Unit*> possibleTargets;		// What the AI controlled unit can attack
 		std::vector<sf::Vector3i> moveRange;	// Where the AI controlled unit can move to
 
 		// Finding the moveRange

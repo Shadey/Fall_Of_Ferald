@@ -394,8 +394,6 @@ void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 				sf::Vector2i pos(target->getX(), target->getY());
 				tempPositions = pathfinder.calculateArea(pos, 1); // Using 1 'till weapons are done
 
-				std::cout << std::endl << unit.getType() << " attacking !" << std::endl;
-
 				// Finding the valid positions
 				for(auto &outer : moveRange)
 				{
@@ -448,7 +446,6 @@ void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 
 				// Attacking the target
 				target->modifyStat("health", 10);	// 10 is a temp value until weapons are redone
-				std::cout << "The target's health is " << target->getStat("health") << std::endl;
 
 				// Removing the target if we need to
 				if(target->getStat("health") <= 0)

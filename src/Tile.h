@@ -13,6 +13,7 @@ class Tile
 		Tile();
 		sf::Sprite getSprite() {return sprite;}
 		std::string getType(){return tileType;}
+		const int& getTerrainDef() { return terrainDef; }
 
 	private:
 		std::string tileType;						// The type of terrain tyle

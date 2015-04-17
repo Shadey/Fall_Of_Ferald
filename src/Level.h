@@ -30,7 +30,6 @@ class Level
 		// Accessor methods
 		inline int getTileSize() { return tileSize; }
 		inline AI& getAI() { return combatController; }
-		//inline void nextTurn() { if(playerTurn) playerTurn = false; else playerTurn = true; }
 		void nextTurn();
 		inline bool isPlayerTurn() { return playerTurn; }
     private:
@@ -47,9 +46,6 @@ class Level
         Tile** tiles;
         AI combatController;
 		Pathfinder pathfinder;
-
-		// Private functions
-        void updateAI();
 };
 
 #endif // LEVEL_H

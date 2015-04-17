@@ -123,7 +123,8 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 
 	if(!playerTurn)
 	{
-		updateAI();
+		//updateAI();
+		combatController.update(pathfinder, tiles, tileSize);
 		nextTurn();
 	}
 	else
@@ -219,102 +220,6 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 		// Updating the previous hovered tile
 		previouslyHoveredTile = hoveredTile;
 	}
-}
-
-// Method to call the AI's update methods.
-void Level::updateAI()
-{
-	for(auto &unit : combatController.getAvailableUnits())
-	{
-		std::list<Unit*> possibleTargets;		// What the AI controlled unit can attack
-		std::vector<sf::Vector3i> moveRange;	// Where the AI controlled unit can move to
-
-		// Finding the moveRange
-		moveRange = pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()), unit.getStat("moveRange"));
-
-		// Searching for possible targets based on the moveRange
-		possibleTargets = combatController.getPossibleTargets(moveRange);
-
-		// If there were valid targets within the unit's attack range
-		if(possibleTargets.size() != 0)
-		{
-			Unit* target = combatController.selectTarget(possibleTargets, unit);
-
-			// Ensuring that target isn't null, it shouldn't be but it doesn't hurt to check
-			if(target != NULL)
-			{
-				// Where the AI can attack the target from on the map
-				std::vector<sf::Vector3i> validPositions;
-				std::vector<sf::Vector3i> tempPositions;
-
-				// calculateArea breaks if the pos vector is constructed in the function call. No idea why.
-				sf::Vector2i pos(target->getX(), target->getY());
-				tempPositions = pathfinder.calculateArea(pos, 1); // Using 1 'till weapons are done
-
-				std::cout << std::endl << unit.getType() << " attacking !" << std::endl;
-
-				// Finding the valid positions
-				for(auto &outer : moveRange)
-				{
-					for(auto &inner : tempPositions)
-					{
-						if(outer.x == inner.x && outer.y == inner.y)
-						{
-							int x = inner.x;
-							int y = inner.y;
-							validPositions.push_back(sf::Vector3i(x, y, tiles[x][y].terrainDef));
-						}
-					}
-				}
-
-				// TODO
-				// Preventing units moving onto the same tile
-				// It's not working ;_;
-/*
-				for(auto &itr : combatController.getAvailableUnits())
-				{
-					if(itr.getX() != unit.getX() && itr.getY() != unit.getY())
-					{
-						for(auto posItr = validPositions.begin(); posItr != validPositions.end() ; )
-						{
-							if(posItr->x == itr.getX() && posItr->y == itr.getY())
-								posItr = validPositions.erase(posItr);
-							else ++posItr;
-						}
-					}
-				}
-				for(auto &itr : combatController.getEnemyUnits())
-				{
-					if(itr.getX() == unit.getX() && itr.getY() == unit.getY())
-					{
-						for(auto posItr = validPositions.begin(); posItr != validPositions.end() ; )
-						{
-							if(posItr->x == itr.getX() && posItr->y == itr.getY())
-								posItr = validPositions.erase(posItr);
-							else ++posItr;
-						}
-					}
-				}
-*/
-				// Selecting the best tile to attack from
-				if(validPositions.size() != 0)	// Only move if there's a valid position
-				{
-					sf::Vector2f bestPosition = combatController.selectPosition(validPositions);
-					unit.setPosition(bestPosition, tileSize);
-				}
-
-				// Attacking the target
-				target->modifyStat("health", 10);	// 10 is a temp value until weapons are redone
-				std::cout << "The target's health is " << target->getStat("health") << std::endl;
-			}
-
-			// Updating the unit's sprite
-			unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
-
-			// Actual attacking should go here
-		}
-	}
-
 }
 
 // Draw method, draws the tiles and the AI-controlled units

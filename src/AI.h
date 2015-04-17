@@ -14,6 +14,7 @@
 #include <SFML/System/Vector3.hpp>
 #include "Unit.h"
 #include "Tile.h"
+#include "Pathfinder.h"
 
 class AI
 {
@@ -27,6 +28,7 @@ class AI
 		sf::Vector2f selectPosition(std::vector<sf::Vector3i> validRange);
         void setMapDimensions(int width, int height);
 		void updateSprites(const int& tileSize);
+		void update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize);
 		inline void addEnemyUnit(Unit unit) { enemyUnits.push_back(unit); }
 		void outputPositions();
         virtual ~AI();

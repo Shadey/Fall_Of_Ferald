@@ -442,6 +442,17 @@ void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 				// Attacking the target
 				target->modifyStat("health", 10);	// 10 is a temp value until weapons are redone
 				std::cout << "The target's health is " << target->getStat("health") << std::endl;
+
+				// Removing the target if we need to
+				if(target->getStat("health") <= 0)
+				{
+					for(auto itr = enemyUnits.begin(); itr != enemyUnits.end() ; )
+					{
+						if(target == &*itr)
+							itr = enemyUnits.erase(itr);
+						else ++itr;
+					}
+				}
 			}
 
 			// Updating the unit's sprite

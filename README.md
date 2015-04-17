@@ -10,10 +10,11 @@ Currently in the prototype stage.
 * Tooltips
 * Dialogue Boxes
 * Units
+* Super Basic AI
 
 ## TODO
 * Create a 2D camera so that level sizes aren't restricted to the size of the window
 * Make some sprites that don't look awful
 * Implement dialog trees
-* Most of the UI
-* Basic combat AI
+* Rework invewntory system
+* Display unit information using tooltips when right clicked.

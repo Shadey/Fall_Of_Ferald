@@ -30,20 +30,18 @@ void Game::run()
 	// Deactivating the window's openGL context
 	window.setActive(false);
 
-	// Launching the rendering thread
-	//sf::Thread thread(&Game::renderThread, &window);
-	//std::thread renderThread(&Game::renderThread, this);
-	//thread.launch();
-
     while (!close)
     {
-		std::thread renderThread(&Game::renderThread, this);
-        update();
-        //render();
-		renderThread.join();
-    }
+		// Launching the input thread
+		std::thread inputThread(&Game::inputThread, this);
 
-	//renderThread.join();
+		// Updating during the main thread
+        update();
+        render();
+
+		// Closing the input thread
+		inputThread.join();
+    }
 }
 
 void Game::update()
@@ -63,7 +61,7 @@ void Game::update()
 	}*/
 
 	// Updating the input manager
-	inputManager.update(window);
+	//inputManager.update(window);
 
 	// Updating the UI
 	ui.update(inputManager.getMousePosition(), inputManager.getPrevMousePosition(),
@@ -85,13 +83,11 @@ void Game::update()
 	}
 }
 
-void* Game::renderThread(void* args)
+void* Game::inputThread(void* args)
 {
-    /*window->clear();
-    testLevel->draw(*window);
-	ui.draw(window);
-    window->display();*/
-	((Game*)args)->render();
+	// args should only ever be this, so static casting should be fine
+	Game* thisGame = static_cast<Game*>(args);
+	thisGame->getInputManager()->update(thisGame->getWindow());
 	return NULL;
 }
 void Game::render()

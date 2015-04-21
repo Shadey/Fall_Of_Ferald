@@ -18,7 +18,6 @@ class Game
         virtual ~Game();
         void run();
         void render();
-        static void* renderThread(void* args);
         void update();
     private:
         ImageManager imageManager;
@@ -31,9 +30,10 @@ class Game
 		bool close = false;
         bool turnPassed = false;    // Flag to stop the AI from taking multiple turns
 
-        // AI test vars
-        /*std::list<Unit> testUnits();
-        Unit testUnit("testUnit", "mage", 20, 5, 0, 2, 4, 3, 6, 5, 0);*/
+		// Private functions for threading
+        static void* inputThread(void* args);
+		inline InputManager* getInputManager() { return &inputManager; }
+		inline sf::RenderWindow& getWindow() { return window; }
 };
 
 #endif // GAME_H

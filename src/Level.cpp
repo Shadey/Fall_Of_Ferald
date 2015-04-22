@@ -93,7 +93,7 @@ Level::Level(const std::string& mapPath, const std::string& tileSheetPath, Image
 void Level::initilizeAI(const std::string& unitPath, const std::string& spritesheetPath, ImageManager& imageManager)
 {
     std::cout << "starting to init AI" << std::endl;
-    combatController = AI(unitPath, "Stats/");
+    combatController = new AI(unitPath, "Stats/");
     std::cout << "AI initilized" << std::endl;
 
 	// Loading the images for the NPC units
@@ -104,12 +104,12 @@ void Level::initilizeAI(const std::string& unitPath, const std::string& spritesh
 
 	// Setting the sprites for the NPC units, works as long as the generic unit
 	// names are the same as the imageManager keys
-	for(auto &unit : combatController.getAvailableUnits())
+	for(auto &unit : combatController->getAvailableUnits())
 		unit.setSprite(imageManager.getTexture(unit.getType()));
 
 	// Adding a unit for the AI to fight, normally these would be loaded from a file but eh.
-	combatController.addEnemyUnit(Unit("test", "tank", 5, 50, 10, 0, 6, 3, 16, 2, 3, 3, 1, 3));
-	combatController.getEnemyUnits().back().setSprite(imageManager.getTexture("player"));
+	combatController->addEnemyUnit(Unit("test", "tank", 5, 50, 10, 0, 6, 3, 16, 2, 3, 3, 1, 3));
+	combatController->getEnemyUnits().back().setSprite(imageManager.getTexture("player"));
 
 	// Initilising the pathfinder
 	pathfinder = Pathfinder(this);
@@ -118,14 +118,14 @@ void Level::initilizeAI(const std::string& unitPath, const std::string& spritesh
 void Level::update(InputManager& inputManager, UserInterface& ui)
 {
 	// Updating the sprites
-	combatController.updateSprites(tileSize);
+	combatController->updateSprites(tileSize);
 	sf::Vector2i mousePos = inputManager.getMousePosition();
 	//selectedUnit = NULL;
 
 	if(!playerTurn)
 	{
 		//updateAI();
-		combatController.update(pathfinder, tiles, tileSize);
+		combatController->update(pathfinder, tiles, tileSize);
 		nextTurn();
 	}
 	else
@@ -133,7 +133,7 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 		// Checking if the AI's turn has been initiated
 		if(inputManager.pressedOnce("nextTurn"))
 			//nextTurn();
-		combatController.outputPositions();
+		combatController->outputPositions();
 
 		// Finding the tile that the cursor is hovered over
 		hoveredTile = sf::Vector2i(mousePos.x / tileSize, mousePos.y / tileSize);
@@ -145,7 +145,7 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 			playerUnitSelected = false;
 
 			// Checking each unit to see if we've clicked it
-			for(auto &unit : combatController.getEnemyUnits())
+			for(auto &unit : combatController->getEnemyUnits())
 			{
 				if(hoveredTile.x == unit.getX() && hoveredTile.y == unit.getY())
 				{
@@ -185,7 +185,7 @@ void Level::update(InputManager& inputManager, UserInterface& ui)
 				selectedUnit = NULL;
 
 				// Changing turn if all the player units have been used
-				for(auto &unit : combatController.getEnemyUnits())
+				for(auto &unit : combatController->getEnemyUnits())
 				{
 					if(!unit.getMoved())
 						changeTurn = false;
@@ -239,23 +239,23 @@ void Level::draw(sf::RenderWindow& window)
     }
 
 	// Drawing the units enemy
-	for(auto &unit : combatController.getAvailableUnits())
+	for(auto &unit : combatController->getAvailableUnits())
 		window.draw(unit.getSprite());
 
 	// Drawing the player units
-	for(auto &unit : combatController.getEnemyUnits())
+	for(auto &unit : combatController->getEnemyUnits())
 		window.draw(unit.getSprite());
 }
 
 void Level::drawAIUnits(sf::RenderWindow* window)
 {
-	for(auto &unit : combatController.getAvailableUnits())
+	for(auto &unit : combatController->getAvailableUnits())
 		window->draw(unit.getSprite());
 }
 
 void Level::drawPlayerUnits(sf::RenderWindow* window)
 {
-	for(auto &unit : combatController.getEnemyUnits())
+	for(auto &unit : combatController->getEnemyUnits())
 		window->draw(unit.getSprite());
 }
 
@@ -279,13 +279,13 @@ void Level::nextTurn()
 	if(playerTurn)
 	{
 		playerTurn = false;
-		for(auto &unit : combatController.getAvailableUnits())
+		for(auto &unit : combatController->getAvailableUnits())
 			unit.setMoved(false);
 	}
 	else
 	{
 		playerTurn = true;
-		for(auto &unit : combatController.getEnemyUnits())
+		for(auto &unit : combatController->getEnemyUnits())
 			unit.setMoved(false);
 	}
 }

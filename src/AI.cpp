@@ -477,3 +477,84 @@ void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 	DebugLogger debugLog;
 	debugLog.outputTiming(timeTaken);
 }
+
+void AI::unitUpdateThread(void* unitPtr, Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
+{
+	// Casting the void pointer
+	Unit* unit = static_cast<Unit *>(unitPtr);
+
+	// Updating the unit
+	std::list<Unit*> possibleTargets;		// What the AI controlled unit can attack
+	std::vector<sf::Vector3i> moveRange;	// Where the AI controlled unit can move to
+	
+	// Finding the unit's moveRange
+	moveRange = pathfinder.calculateArea(sf::Vector2i(unit->getX(), unit->getY()), unit->getStat("moveRange"));
+
+	// Searching for possible targets based on the moveRange
+	possibleTargets = getPossibleTargets(moveRange);
+
+	// If there were valid targets within the unit's attack range
+	if(possibleTargets.size() != 0)
+	{
+		Unit* target = selectTarget(possibleTargets, *unit);
+
+		// Ensuring that target isn't null, it shouldn't be but it doesn't hurt to check
+		if(target != NULL)
+		{
+			// Where the AI can attack the target from on the map
+			std::vector<sf::Vector3i> validPositions;
+			std::vector<sf::Vector3i> tempPositions;
+
+			// calculateArea breaks if the pos vector is constructed in the function call. No idea why.
+			sf::Vector2i pos(target->getX(), target->getY());
+			tempPositions = pathfinder.calculateArea(pos, 1); // Using 1 'till weapons are done
+
+			// Finding the valid positions
+			for(auto &outer : moveRange)
+			{
+				for(auto &inner : tempPositions)
+				{
+					if(outer.x == inner.x && outer.y == inner.y)
+					{
+						int x = inner.x;
+						int y = inner.y;
+						validPositions.push_back(sf::Vector3i(x, y, tiles[x][y].getTerrainDef()));
+					}
+				}
+			}
+			// Selecting the best tile to attack from
+			if(validPositions.size() != 0)	// Only move if there's a valid position
+			{
+				sf::Vector2f bestPosition = selectPosition(validPositions);
+				unit->setPosition(bestPosition, tileSize);
+			}
+	
+			// Protecting the enemy
+			enemyMutex.lock();
+			// Attacking the target
+			target->modifyStat("health", 10);	// 10 is a temp value until weapons are redone
+			enemyMutex.unlock();
+
+			// Removing the target if we need to
+			if(target->getStat("health") <= 0)
+			{
+				for(auto itr = enemyUnits.begin(); itr != enemyUnits.end() ; )
+				{
+					if(target == &*itr)
+					{
+						target = NULL;
+						
+						// Protecting the enemy units list
+						enemyListMutex.lock();
+						itr = enemyUnits.erase(itr);
+						enemyListMutex.unlock();
+					}
+					else ++itr;
+				}
+			}
+		}
+	}
+
+	// Updating the unit's sprite
+	unit->getSprite().setPosition(unit->getX() * tileSize, unit->getY() * tileSize);
+}

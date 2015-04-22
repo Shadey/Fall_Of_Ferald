@@ -29,7 +29,7 @@ class Level
 
 		// Accessor methods
 		inline int getTileSize() { return tileSize; }
-		inline AI& getAI() { return combatController; }
+		inline AI& getAI() { return *combatController; }
 		void nextTurn();
 		inline bool isPlayerTurn() { return playerTurn; }
     private:
@@ -44,7 +44,7 @@ class Level
 		sf::Vector2i selectedUnitPos;
 		Unit* selectedUnit;
         Tile** tiles;
-        AI combatController;
+        AI* combatController;
 		Pathfinder pathfinder;
 
 		void drawPlayerUnits(sf::RenderWindow* window);

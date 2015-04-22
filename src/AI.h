@@ -12,6 +12,7 @@
 #include <vector>
 #include <map>
 #include <SFML/System/Vector3.hpp>
+#include <mutex>
 #include "Unit.h"
 #include "Tile.h"
 #include "Pathfinder.h"
@@ -36,6 +37,7 @@ class AI
 		// Accessor methods
 		inline std::list<Unit>& getAvailableUnits() { return availableUnits; }
 		inline std::list<Unit>& getEnemyUnits() { return enemyUnits; }
+
     private:
         std::list<Unit> availableUnits;	// The units that are available to this AI
         std::list<Unit> enemyUnits;		// The units that are available to an enemy faction ie player.
@@ -43,7 +45,12 @@ class AI
         int mapWidth;
         int mapHeight;
 
+		// Mutexes for protecting data
+		mutable std::mutex enemyMutex;
+		mutable std::mutex enemyListMutex;
+
         void calculateCosts(Unit& currentUnit, int** costs, Tile** const levelMap);
+		void unitUpdateThread(void* unitPtr, Pathfinder& pathfinder, Tile** const tiles, const int& tileSize);
 };
 
 #endif // AI_H

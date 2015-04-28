@@ -8,6 +8,7 @@
 #include "DebugLogger.h"
 #include <chrono>
 #include <thread>
+#include <algorithm>
 
 AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
 {
@@ -366,129 +367,34 @@ AI::AI()
 
 void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 {
-	// Starting timing
-	std::chrono::steady_clock::time_point timerStart = std::chrono::steady_clock::now();
-
-	for(auto &unit : getAvailableUnits())
+	std::thread* updateThreads[availableUnits.size()];
+	int counter = 0;
+	
+	for(auto unit : availableUnits)
 	{
-		std::list<Unit*> possibleTargets;		// What the AI controlled unit can attack
-		std::vector<sf::Vector3i> moveRange;	// Where the AI controlled unit can move to
-
-		// Finding the moveRange
-		moveRange = pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()), unit.getStat("moveRange"));
-
-		// Searching for possible targets based on the moveRange
-		possibleTargets = getPossibleTargets(moveRange);
-
-		// If there were valid targets within the unit's attack range
-		if(possibleTargets.size() != 0)
-		{
-			Unit* target = selectTarget(possibleTargets, unit);
-
-			// Ensuring that target isn't null, it shouldn't be but it doesn't hurt to check
-			if(target != NULL)
-			{
-				// Where the AI can attack the target from on the map
-				std::vector<sf::Vector3i> validPositions;
-				std::vector<sf::Vector3i> tempPositions;
-
-				// calculateArea breaks if the pos vector is constructed in the function call. No idea why.
-				sf::Vector2i pos(target->getX(), target->getY());
-				tempPositions = pathfinder.calculateArea(pos, 1); // Using 1 'till weapons are done
-
-				// Finding the valid positions
-				for(auto &outer : moveRange)
-				{
-					for(auto &inner : tempPositions)
-					{
-						if(outer.x == inner.x && outer.y == inner.y)
-						{
-							int x = inner.x;
-							int y = inner.y;
-							validPositions.push_back(sf::Vector3i(x, y, tiles[x][y].getTerrainDef()));
-						}
-					}
-				}
-
-				// TODO
-				// Preventing units moving onto the same tile
-				// It's not working ;_;
-/*
-				for(auto &itr : combatController.getAvailableUnits())
-				{
-					if(itr.getX() != unit.getX() && itr.getY() != unit.getY())
-					{
-						for(auto posItr = validPositions.begin(); posItr != validPositions.end() ; )
-						{
-							if(posItr->x == itr.getX() && posItr->y == itr.getY())
-								posItr = validPositions.erase(posItr);
-							else ++posItr;
-						}
-					}
-				}
-				for(auto &itr : combatController.getEnemyUnits())
-				{
-					if(itr.getX() == unit.getX() && itr.getY() == unit.getY())
-					{
-						for(auto posItr = validPositions.begin(); posItr != validPositions.end() ; )
-						{
-							if(posItr->x == itr.getX() && posItr->y == itr.getY())
-								posItr = validPositions.erase(posItr);
-							else ++posItr;
-						}
-					}
-				}
-*/
-				// Selecting the best tile to attack from
-				if(validPositions.size() != 0)	// Only move if there's a valid position
-				{
-					sf::Vector2f bestPosition = selectPosition(validPositions);
-					unit.setPosition(bestPosition, tileSize);
-				}
-
-				// Attacking the target
-				target->modifyStat("health", 10);	// 10 is a temp value until weapons are redone
-
-				// Removing the target if we need to
-				if(target->getStat("health") <= 0)
-				{
-					for(auto itr = enemyUnits.begin(); itr != enemyUnits.end() ; )
-					{
-						if(target == &*itr)
-						{
-							target = NULL;
-							itr = enemyUnits.erase(itr);
-						}
-						else ++itr;
-					}
-				}
-			}
-
-			// Updating the unit's sprite
-			unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
-		}
+		updateThreads[counter] = new std::thread(&AI::unitUpdateThread, this, std::ref(unit), std::ref(pathfinder), tiles, tileSize);
+		counter++;
 	}
 
-	// Stopping the timer
-	std::chrono::steady_clock::time_point timerEnd = std::chrono::steady_clock::now();
-	auto timeTaken = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart).count();
-	std::cout << std::endl << "Updating took " << timeTaken << " micro seconds." << std::endl;
-
-	DebugLogger debugLog;
-	debugLog.outputTiming(timeTaken);
+	// Waiting for the threads to finish
+	counter = 0;
+	while (counter < availableUnits.size())
+	{
+		updateThreads[counter]->join();
+		delete updateThreads[counter];
+		counter++;
+	}
+		
 }
 
-void AI::unitUpdateThread(void* unitPtr, Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
+void AI::unitUpdateThread(Unit& unit, Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 {
-	// Casting the void pointer
-	Unit* unit = static_cast<Unit *>(unitPtr);
-
 	// Updating the unit
 	std::list<Unit*> possibleTargets;		// What the AI controlled unit can attack
 	std::vector<sf::Vector3i> moveRange;	// Where the AI controlled unit can move to
 	
 	// Finding the unit's moveRange
-	moveRange = pathfinder.calculateArea(sf::Vector2i(unit->getX(), unit->getY()), unit->getStat("moveRange"));
+	moveRange = pathfinder.calculateArea(sf::Vector2i(unit.getX(), unit.getY()), unit.getStat("moveRange"));
 
 	// Searching for possible targets based on the moveRange
 	possibleTargets = getPossibleTargets(moveRange);
@@ -496,7 +402,7 @@ void AI::unitUpdateThread(void* unitPtr, Pathfinder& pathfinder, Tile** const ti
 	// If there were valid targets within the unit's attack range
 	if(possibleTargets.size() != 0)
 	{
-		Unit* target = selectTarget(possibleTargets, *unit);
+		Unit* target = selectTarget(possibleTargets, unit);
 
 		// Ensuring that target isn't null, it shouldn't be but it doesn't hurt to check
 		if(target != NULL)
@@ -526,7 +432,7 @@ void AI::unitUpdateThread(void* unitPtr, Pathfinder& pathfinder, Tile** const ti
 			if(validPositions.size() != 0)	// Only move if there's a valid position
 			{
 				sf::Vector2f bestPosition = selectPosition(validPositions);
-				unit->setPosition(bestPosition, tileSize);
+				unit.setPosition(bestPosition, tileSize);
 			}
 	
 			// Protecting the enemy
@@ -556,5 +462,5 @@ void AI::unitUpdateThread(void* unitPtr, Pathfinder& pathfinder, Tile** const ti
 	}
 
 	// Updating the unit's sprite
-	unit->getSprite().setPosition(unit->getX() * tileSize, unit->getY() * tileSize);
+	unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
 }

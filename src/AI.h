@@ -50,7 +50,7 @@ class AI
 		mutable std::mutex enemyListMutex;
 
         void calculateCosts(Unit& currentUnit, int** costs, Tile** const levelMap);
-		void unitUpdateThread(void* unitPtr, Pathfinder& pathfinder, Tile** const tiles, const int& tileSize);
+		void unitUpdateThread(Unit& unit, Pathfinder& pathfinder, Tile** const tiles, const int& tileSize);
 };
 
 #endif // AI_H

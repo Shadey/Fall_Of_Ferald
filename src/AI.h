@@ -13,6 +13,7 @@
 #include <map>
 #include <SFML/System/Vector3.hpp>
 #include <mutex>
+#include <condition_variable>
 #include "Unit.h"
 #include "Tile.h"
 #include "Pathfinder.h"
@@ -49,8 +50,15 @@ class AI
 		mutable std::mutex enemyMutex;
 		mutable std::mutex enemyListMutex;
 
+		bool closeWinThread;
+		mutable std::mutex wonMutex;
+
+		// Condition var for a pseudo-failure state
+		std::condition_variable playerKilled;
+
         void calculateCosts(Unit& currentUnit, int** costs, Tile** const levelMap);
 		void unitUpdateThread(Unit& unit, Pathfinder& pathfinder, Tile** const tiles, const int& tileSize);
+		void winThread();
 };
 
 #endif // AI_H

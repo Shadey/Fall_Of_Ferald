@@ -82,6 +82,7 @@ void Game::inputThread(void* args)
 	thisGame->getInputManager()->update(thisGame->getWindow());
 	//return NULL;
 }
+
 void Game::render()
 {
 	/*sf::Context context;

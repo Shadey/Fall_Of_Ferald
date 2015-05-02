@@ -10,6 +10,7 @@
 #include "AI.h"
 #include <iostream>
 #include <list>
+#include <condition_variable>
 
 class Game
 {

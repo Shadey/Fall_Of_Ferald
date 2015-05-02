@@ -15,6 +15,11 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
     mapWidth = -1;
     mapHeight = -1;
 
+	// Starting our condition thread
+	closeWinThread = false;
+	std::thread winThread(&AI::winThread, this);
+	winThread.detach();
+
     // Stuff for file parsing
     std::ifstream unitFile(l_unitsPath);
     std::ifstream statsFile;
@@ -363,6 +368,7 @@ AI::AI()
 void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 {
 	std::thread* updateThreads[availableUnits.size()];
+
 	int counter = 0;
 
 	// Starting the timer
@@ -390,6 +396,14 @@ void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 
 	DebugLogger debugLog;
 	//debugLog.outputTiming(timeTaken);
+
+	// Notifiying if the player's lost
+	if(enemyUnits.size() == 0)
+	{
+		std::unique_lock<std::mutex> locker(wonMutex);
+		playerKilled.notify_one();
+		closeWinThread = true;
+	}
 }
 
 void AI::unitUpdateThread(Unit& unit, Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
@@ -464,4 +478,15 @@ void AI::unitUpdateThread(Unit& unit, Pathfinder& pathfinder, Tile** const tiles
 			}
 		}
 	}
+}
+
+void AI::winThread()
+{
+	std::unique_lock<std::mutex> lock(wonMutex);
+	
+	while(!closeWinThread)	// Avoiding spurious wakeups
+		playerKilled.wait(lock);
+
+	if(enemyUnits.size() == 0)
+		std::cout << "He's dead, jim!" << std::endl;
 }

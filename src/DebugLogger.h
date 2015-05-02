@@ -5,7 +5,7 @@
 class DebugLogger
 {
 	private:
-		const bool optimized = false;
+		const bool optimized = true;
 	public:
 		DebugLogger(){}
 		~DebugLogger(){}

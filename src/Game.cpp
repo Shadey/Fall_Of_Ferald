@@ -53,13 +53,6 @@ void Game::update()
     std::vector<sf::Vector3i> locations;
 	std::stack<sf::Vector2i> path;
 
-	/*while(window.pollEvent(event))
-	{
-		switch(event.type)
-		{
-		}
-	}*/
-
 	// Updating the input manager
 	//inputManager.update(window);
 
@@ -78,17 +71,16 @@ void Game::update()
 	}
 	else if (inputManager.pressedOnce("confirm"))
 	{
-		std::cout << "Creating tooltip!" << std::endl;
 		ui.addTooltip("Test Tooltip", "Sometext", imageManager.getTexture("tooltip"), 50, 50);
 	}
 }
 
-void* Game::inputThread(void* args)
+void Game::inputThread(void* args)
 {
 	// args should only ever be this, so static casting should be fine
 	Game* thisGame = static_cast<Game*>(args);
 	thisGame->getInputManager()->update(thisGame->getWindow());
-	return NULL;
+	//return NULL;
 }
 void Game::render()
 {

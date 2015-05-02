@@ -31,7 +31,7 @@ class Game
         bool turnPassed = false;    // Flag to stop the AI from taking multiple turns
 
 		// Private functions for threading
-        static void* inputThread(void* args);
+        static void inputThread(void* args);
 		inline InputManager* getInputManager() { return &inputManager; }
 		inline sf::RenderWindow& getWindow() { return window; }
 };

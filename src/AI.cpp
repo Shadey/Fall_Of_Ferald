@@ -157,22 +157,17 @@ AI::AI(const std::string l_unitsPath, const std::string l_statsPath)
             for(int k = 0; k < statCount; k++)
             {
                 finalStats[k] += baseStats[k];
-                std::cout << "Base Stat: " << baseStats[k];
-				std::cout << "\t Final pre increment: " << finalStats[k] << std::endl;
                 int rng;
                 for(int j = 0; j < tempLvl - 1; j++)
                 {
                     rng = dis(gen);
-                    //std::cout << "rng: " << rng << ", grw: " << growths[k] << std::endl;
 
                     if(rng < growths[k])
                     {
                         finalStats[k]++;
                     }
                 }
-	            std::cout << ", Final: " << finalStats[k] << std::endl;
             }
-            std::cout << std::endl;
 
             // Adding the unit to the available units and assigning the previous unit type
             availableUnits.push_back(Unit(unitType, tempX, tempY, finalStats, tempLvl));
@@ -369,6 +364,9 @@ void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 {
 	std::thread* updateThreads[availableUnits.size()];
 	int counter = 0;
+
+	// Starting the timer
+	std::chrono::steady_clock::time_point timerStart = std::chrono::steady_clock::now();
 	
 	for(auto unit : availableUnits)
 	{
@@ -384,7 +382,14 @@ void AI::update(Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
 		delete updateThreads[counter];
 		counter++;
 	}
-		
+
+	// Stopping the timer
+	std::chrono::steady_clock::time_point timerEnd = std::chrono::steady_clock::now();
+	auto timeTaken = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart).count();
+	std::cout << std::endl << "Updating took " << timeTaken << " micro seconds." << std::endl;
+
+	DebugLogger debugLog;
+	//debugLog.outputTiming(timeTaken);
 }
 
 void AI::unitUpdateThread(Unit& unit, Pathfinder& pathfinder, Tile** const tiles, const int& tileSize)
@@ -435,10 +440,9 @@ void AI::unitUpdateThread(Unit& unit, Pathfinder& pathfinder, Tile** const tiles
 				unit.setPosition(bestPosition, tileSize);
 			}
 	
-			// Protecting the enemy
+			// Protecting the enemy from other threads
 			enemyMutex.lock();
-			// Attacking the target
-			target->modifyStat("health", 10);	// 10 is a temp value until weapons are redone
+				target->modifyStat("health", 10);	// 10 is a temp value until weapons are redone
 			enemyMutex.unlock();
 
 			// Removing the target if we need to
@@ -452,7 +456,7 @@ void AI::unitUpdateThread(Unit& unit, Pathfinder& pathfinder, Tile** const tiles
 						
 						// Protecting the enemy units list
 						enemyListMutex.lock();
-						itr = enemyUnits.erase(itr);
+							itr = enemyUnits.erase(itr);
 						enemyListMutex.unlock();
 					}
 					else ++itr;
@@ -460,7 +464,4 @@ void AI::unitUpdateThread(Unit& unit, Pathfinder& pathfinder, Tile** const tiles
 			}
 		}
 	}
-
-	// Updating the unit's sprite
-	unit.getSprite().setPosition(unit.getX() * tileSize, unit.getY() * tileSize);
 }

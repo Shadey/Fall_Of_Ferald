@@ -34,7 +34,6 @@ Level::Level(const std::string& mapPath, const std::string& tileSheetPath, Image
                 std::string ss;
                 while(std::getline(subString, ss, ','))
                 {
-                    std::cout << "paring the first line" << std::endl;
 
                     // If statments are there to prevent cleaning up the converter
                     // as doing so requires multiple function calls.
@@ -51,8 +50,6 @@ Level::Level(const std::string& mapPath, const std::string& tileSheetPath, Image
                     }
 
                 }
-
-                std::cout << "Level defined with size " << levelWidth << "x" << levelHeight << std::endl;
 
                 // Defining the array
                 tiles = new Tile*[levelWidth];
@@ -92,9 +89,7 @@ Level::Level(const std::string& mapPath, const std::string& tileSheetPath, Image
 // with no enemies or NPC allies.
 void Level::initilizeAI(const std::string& unitPath, const std::string& spritesheetPath, ImageManager& imageManager)
 {
-    std::cout << "starting to init AI" << std::endl;
     combatController = new AI(unitPath, "Stats/");
-    std::cout << "AI initilized" << std::endl;
 
 	// Loading the images for the NPC units
     imageManager.loadImage(spritesheetPath + "/mage.png", "mage");
